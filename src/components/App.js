@@ -19,16 +19,19 @@ import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
 
 const App = () => {
+  //переменные для регистрации и авторизации пользователя
   const history = useHistory();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [isRegistered, setIsRegistered] = useState(false);
+  //переменные для попапов
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [isDeletePlacePopupOpen, setIsDeletePlacePopupOpen] = useState(false);
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
+  //переменные для функционала галереи
   const [currentUser, setCurrentUser] = useState({
     name: "",
     about: "",
@@ -41,6 +44,70 @@ const App = () => {
   const [deletedCard, setDeletedCard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isInputErrors, setIsInputErrors] = useState(null);
+
+  //функция регистрации пользователя
+  function handleRegister(password, email) {
+    apiAuth
+      .register(password, email)
+      .then(() => {
+        setIsRegistered(true);
+        setIsInfoTooltipOpen(true);
+      })
+      .catch((error) => {
+        setIsRegistered(false);
+        setIsInfoTooltipOpen(true);
+        handleError(error);
+      });
+  }
+
+  //проверка при открытии сайта: залогинен ли текущий пользователь
+  useEffect(() => {
+    checkUserToken();
+  }, []);
+
+  //проверка токена в localStorage: если да, то устанавливаем, что пользователь залогинен
+  const checkUserToken = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      apiAuth
+        .isTokenValid(token)
+        .then((user) => {
+          const { data } = user;
+          const { email } = data;
+          setUserEmail(email);
+          setIsLoggedIn(true);
+          history.push("/");
+        })
+        .catch(handleError);
+    }
+  };
+
+  //обработка ошибок при выполнении запросов
+  const handleError = (error) => {
+    console.log(`Ошибка: ${error}`);
+  };
+
+  //функция логина пользователя
+  function handleLogin(password, email) {
+    apiAuth
+      .authorize(password, email)
+      .then((data) => {
+        if (data) {
+          const { token } = data;
+          localStorage.setItem("token", token);
+          checkUserToken();
+        }
+      })
+      .catch(handleError);
+  }
+
+  //функция выхода из аккаунта текущего пользователя
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUserEmail("");
+    setIsLoggedIn(false);
+    history.push("/sign-in");
+  };
 
   //запрос всех карточек с сервера, обновление стейта с карточками,
   //обработчики лайка и удаления карточки
@@ -207,76 +274,6 @@ const App = () => {
     document.removeEventListener("keydown", handleEscClick);
   }
 
-  //функция регистрации пользователя
-  function handleRegister(password, email) {
-    apiAuth
-      .register(password, email)
-      .then(() => {
-        setIsRegistered(true);
-        setIsInfoTooltipOpen(true);
-      })
-      .catch((error) => {
-        setIsRegistered(false);
-        setIsInfoTooltipOpen(true);
-        handleError(error);
-      });
-  }
-
-  //переход в галерею, если пользователь залогинен
-  useEffect(
-    (isLoggedIn) => {
-      history.push("/");
-    },
-    [isLoggedIn]
-  );
-
-  //проверка при открытии сайта: залогинен ли текущий пользователь
-  useEffect(() => {
-    checkUserToken();
-  }, []);
-
-  //проверка токена в localStorage: если да, то устанавливаем, что пользователь залогинен
-  const checkUserToken = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      apiAuth
-        .isTokenValid(token)
-        .then((user) => {
-          const { userdata } = user;
-          const { email } = userdata;
-          setUserEmail(email);
-          setIsLoggedIn(true);
-        })
-        .catch(handleError);
-    }
-  };
-
-  //обработка ошибок при выполнении запросов
-  const handleError = (error) => {
-    console.log(`Ошибка: ${error}`);
-  };
-
-  //функция логина пользователя
-  function handleLogin(password, email) {
-    apiAuth
-      .authorize(password, email)
-      .then((data) => {
-        if (data) {
-          const { token } = data;
-          localStorage.setItem("token", token);
-          checkUserToken();
-        }
-      })
-      .catch(handleError);
-  }
-
-  //функция выхода из аккаунта текущего пользователя
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setUserEmail("");
-    setIsLoggedIn(false);
-  };
-
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Header
@@ -285,10 +282,10 @@ const App = () => {
         onLogout={handleLogout}
       />
       <Switch>
-        <Route exact path="/sign-up">
+        <Route path="/sign-up">
           <Register onRegister={handleRegister} />
         </Route>
-        <Route exact path="/sign-in">
+        <Route path="/sign-in">
           <Login onLogin={handleLogin} />
         </Route>
         <ProtectedRoute
