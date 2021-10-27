@@ -1,11 +1,15 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function DeletePlacePopup({ isOpen, onClose, onApproveDeletePlace }) {
-  function handleFormSubmit(evt) {
+export default function DeletePlacePopup({
+  isOpen,
+  onClose,
+  onApproveDeletePlace,
+}) {
+  const handleFormSubmit = (evt) => {
     evt.preventDefault();
     onApproveDeletePlace();
-  }
+  };
 
   return (
     <PopupWithForm
@@ -18,5 +22,3 @@ function DeletePlacePopup({ isOpen, onClose, onApproveDeletePlace }) {
     />
   );
 }
-
-export default DeletePlacePopup;

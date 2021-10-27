@@ -1,4 +1,4 @@
-function PopupWithForm({
+export default function PopupWithForm({
   title,
   name,
   submitButtonText,
@@ -6,7 +6,7 @@ function PopupWithForm({
   onClose,
   onSubmit,
   children,
-  isSubmitButtonDisabled,
+  isValid,
 }) {
   const popupClassName = `popup ${isOpen && "popup_opened"}`;
 
@@ -30,7 +30,7 @@ function PopupWithForm({
           {children}
           <button
             className={`button popup__button_type_submit ${
-              isSubmitButtonDisabled && "popup__button_type_submit_disabled"
+              !isValid && "popup__button_type_submit_disabled"
             }`}
             type="submit"
             aria-label="Сохранить изменения"
@@ -42,5 +42,3 @@ function PopupWithForm({
     </div>
   );
 }
-
-export default PopupWithForm;

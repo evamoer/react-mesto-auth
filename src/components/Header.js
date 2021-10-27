@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoPath from "../images/logo.svg";
 
-function Header({ isLoggedIn, userEmail, onLogout }) {
+export default function Header({ isLoggedIn, userEmail, onLogout }) {
   const location = useLocation();
   const currentLocation = location.pathname;
 
@@ -36,5 +36,3 @@ function Header({ isLoggedIn, userEmail, onLogout }) {
     </header>
   );
 }
-
-export default Header;

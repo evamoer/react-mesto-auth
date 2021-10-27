@@ -1,15 +1,18 @@
 import React from "react";
 
-const InfoTooltip = ({ isOpen, onClose, isRegistered }) => {
+export default function InfoTooltip({ isOpen, onClose, isRegistered }) {
   const popupClassName = `popup ${isOpen && "popup_opened"}`;
+
   const title = isRegistered
     ? "Вы успешно зарегистрировались!"
     : "Что-то пошло не так! Попробуйте ещё раз.";
+
   const signClassName = `popup__info-sign ${
     isRegistered
       ? "popup__info-sign_type_success"
       : "popup__info-sign_type_fail"
   }`;
+
   return (
     <div className={popupClassName} onMouseDown={onClose}>
       <div className="popup__container">
@@ -24,6 +27,4 @@ const InfoTooltip = ({ isOpen, onClose, isRegistered }) => {
       </div>
     </div>
   );
-};
-
-export default InfoTooltip;
+}

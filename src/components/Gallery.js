@@ -1,7 +1,12 @@
 import React from "react";
 import Card from "./Card";
 
-const Gallery = ({ onImageCard, cards, onCardLike, onCardDelete }) => {
+export default function Gallery({
+  onImageCard,
+  cards,
+  onCardLike,
+  onCardDelete,
+}) {
   return (
     <section className="gallery content__gallery">
       <ul className="gallery-table">
@@ -21,6 +26,4 @@ const Gallery = ({ onImageCard, cards, onCardLike, onCardDelete }) => {
       </ul>
     </section>
   );
-};
-
-export default Gallery;
+}

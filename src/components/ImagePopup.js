@@ -1,4 +1,4 @@
-function ImagePopup({ card, isOpen, onClose }) {
+export default function ImagePopup({ card, isOpen, onClose }) {
   return (
     <div
       className={`popup popup_type_full-image ${
@@ -25,5 +25,3 @@ function ImagePopup({ card, isOpen, onClose }) {
     </div>
   );
 }
-
-export default ImagePopup;

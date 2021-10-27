@@ -1,49 +1,32 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import useFormAndValidation from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
 
-function EditProfilePopup({
+export default function EditProfilePopup({
   isOpen,
   onClose,
   onUpdateUser,
-  enableValidation,
-  isInputErrors,
-  toggleSubmitButtonState,
   submitButtonText,
 }) {
+  const { values, handleChange, errors, isValid, setValues, resetForm } =
+    useFormAndValidation();
   const { name, about } = useContext(CurrentUserContext);
-  const defaultValue = () => {
-    return { name: name, description: about };
-  };
-  const [editProfileInputValues, setEditProfileInputValues] = useState(
-    defaultValue()
-  );
-  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(null);
-  const hasEmptyInputs = () => {
-    return Object.values(defaultValue()).some((value) => value === "");
-  };
+
   useEffect(() => {
     if (isOpen) {
-      setEditProfileInputValues(defaultValue());
-      setIsSubmitButtonDisabled(hasEmptyInputs());
+      resetForm();
+      setValues({ name, description: about });
     }
   }, [isOpen]);
 
-  function handleInputChange(evt) {
-    setEditProfileInputValues({
-      ...editProfileInputValues,
-      [evt.target.name]: evt.target.value,
-    });
-    enableValidation(evt.target);
-  }
-
-  function handleFormSubmit(evt) {
+  const handleFormSubmit = (evt) => {
     evt.preventDefault();
     onUpdateUser({
-      name: editProfileInputValues.name,
-      about: editProfileInputValues.description,
+      name: values.name,
+      about: values.description,
     });
-  }
+  };
 
   return (
     <PopupWithForm
@@ -53,28 +36,25 @@ function EditProfilePopup({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleFormSubmit}
-      isSubmitButtonDisabled={toggleSubmitButtonState(
-        isSubmitButtonDisabled,
-        editProfileInputValues
-      )}
+      isValid={isValid}
     >
       <div className="popup__input-field">
         <input
           type="text"
           className={`popup__input ${
-            isInputErrors?.name && "popup__input_type_error"
+            errors?.name && "popup__input_type_error"
           }`}
           name="name"
           placeholder="Имя пользователя"
-          value={editProfileInputValues.name}
-          onChange={handleInputChange}
+          value={values?.name || ""}
+          onChange={handleChange}
           required
           minLength="2"
           maxLength="40"
         />
-        {isInputErrors?.name && (
+        {errors?.name && (
           <span className="popup__error" id="nameInputError">
-            {isInputErrors.name}
+            {errors.name}
           </span>
         )}
       </div>
@@ -82,24 +62,22 @@ function EditProfilePopup({
         <input
           type="text"
           className={`popup__input ${
-            isInputErrors?.description && "popup__input_type_error"
+            errors?.description && "popup__input_type_error"
           }`}
           name="description"
           placeholder="О себе"
-          value={editProfileInputValues.description}
-          onChange={handleInputChange}
+          value={values?.description || ""}
+          onChange={handleChange}
           required
           minLength="2"
           maxLength="200"
         />
-        {isInputErrors?.description && (
+        {errors?.description && (
           <span className="popup__error" id="aboutInputError">
-            {isInputErrors.description}
+            {errors.description}
           </span>
         )}
       </div>
     </PopupWithForm>
   );
 }
-
-export default EditProfilePopup;

@@ -2,7 +2,7 @@ import React from "react";
 import Profile from "./Profile";
 import Gallery from "./Gallery";
 
-function Main({
+export default function Main({
   onEditProfile,
   onAddPlace,
   onEditAvatar,
@@ -27,5 +27,3 @@ function Main({
     </main>
   );
 }
-
-export default Main;

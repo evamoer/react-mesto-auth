@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import api from "../utils/api";
+import * as api from "../utils/api";
 import * as apiAuth from "../utils/apiAuth";
 
 //импорт компонентов
@@ -43,10 +43,9 @@ const App = () => {
   const [selectedCard, setSelectedCard] = useState(null);
   const [deletedCard, setDeletedCard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isInputErrors, setIsInputErrors] = useState(null);
 
   //функция регистрации пользователя
-  function handleRegister(password, email) {
+  const handleRegister = (password, email) => {
     apiAuth
       .register(password, email)
       .then(() => {
@@ -58,7 +57,7 @@ const App = () => {
         setIsInfoTooltipOpen(true);
         handleError(error);
       });
-  }
+  };
 
   //проверка при открытии сайта: залогинен ли текущий пользователь
   useEffect(() => {
@@ -88,7 +87,7 @@ const App = () => {
   };
 
   //функция логина пользователя
-  function handleLogin(password, email) {
+  const handleLogin = (password, email) => {
     apiAuth
       .authorize(password, email)
       .then((data) => {
@@ -99,7 +98,7 @@ const App = () => {
         }
       })
       .catch(handleError);
-  }
+  };
 
   //функция выхода из аккаунта текущего пользователя
   const handleLogout = () => {
@@ -118,7 +117,7 @@ const App = () => {
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
-  function handleCardLike(likes, cardId) {
+  const handleCardLike = (likes, cardId) => {
     const isLiked = likes.some((user) => user._id === currentUser._id);
     api
       .changeLikeCardStatus(cardId, isLiked)
@@ -126,9 +125,9 @@ const App = () => {
         setCards((state) => state.map((c) => (c._id === cardId ? newCard : c)));
       })
       .catch((err) => console.log(`Ошибка: ${err}`));
-  }
+  };
 
-  function approveDeletePlace() {
+  const approveDeletePlace = () => {
     setIsDeletePlacePopupOpen(false);
     if (deletedCard !== null) {
       api
@@ -139,18 +138,18 @@ const App = () => {
         .then(() => closeAllPopups())
         .catch((err) => console.log(`Ошибка: ${err}`));
     }
-  }
+  };
 
-  function handleCardDeleteButtonClick(cardId) {
+  const handleCardDeleteButtonClick = (cardId) => {
     setIsDeletePlacePopupOpen(true);
     setEscClickListener();
     setDeletedCard({
       ...deletedCard,
       _id: cardId,
     });
-  }
+  };
 
-  function handleAddPlaceSubmit(inputValuesData) {
+  const handleAddPlaceSubmit = (inputValuesData) => {
     setIsLoading(true);
     api
       .addCard(inputValuesData)
@@ -160,7 +159,7 @@ const App = () => {
       .then(() => closeAllPopups())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
-  }
+  };
 
   //запрос данных текущего пользователя,
   //обработчики обновления данных пользователя и его аватара
@@ -171,7 +170,7 @@ const App = () => {
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
-  function handleUpdateUser(inputValuesData) {
+  const handleUpdateUser = (inputValuesData) => {
     setIsLoading(true);
     api
       .updateUserData(inputValuesData)
@@ -181,9 +180,9 @@ const App = () => {
       .then(() => closeAllPopups())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
-  }
+  };
 
-  function handleUpdateAvatar(inputValuesData) {
+  const handleUpdateAvatar = (inputValuesData) => {
     setIsLoading(true);
     api
       .updateAvatar(inputValuesData)
@@ -191,53 +190,25 @@ const App = () => {
       .then(() => closeAllPopups())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
-  }
-
-  //функция для валидации форм попапов
-  function enableValidation(inputElement) {
-    setIsInputErrors({
-      ...isInputErrors,
-      [inputElement.name]: inputElement.validationMessage,
-    });
-  }
-
-  // меняем состояние кнопки сабмита: если инпуты не тронуты - сохраняем предыдущее состояние
-  // если тронуты, но не все, то сравниваем с предыдущим состоянием и наличием ошибок
-  // если тронуты все, то выявляем ошибки
-  function toggleSubmitButtonState(isSubmitButtonDisabled, inputValues) {
-    const hasAllInputsData =
-      isInputErrors !== null &&
-      Object.values(isInputErrors).length === Object.values(inputValues).length;
-    const hasErrors =
-      isInputErrors !== null &&
-      Object.values(isInputErrors).some((value) => value !== "");
-
-    if (isInputErrors === null) {
-      return isSubmitButtonDisabled;
-    }
-    if (hasAllInputsData) {
-      return hasErrors;
-    }
-    return isSubmitButtonDisabled || hasErrors;
-  }
+  };
 
   //функции открытия попапов
-  function handleEditProfileClick() {
+  const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
     setEscClickListener();
-  }
+  };
 
-  function handleAddPlaceClick() {
+  const handleAddPlaceClick = () => {
     setIsAddPlacePopupOpen(true);
     setEscClickListener();
-  }
+  };
 
-  function handleEditAvatarClick() {
+  const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
     setEscClickListener();
-  }
+  };
 
-  function handleCardClick(card) {
+  const handleCardClick = (card) => {
     setSelectedCard({
       ...selectedCard,
       name: card.name,
@@ -245,21 +216,22 @@ const App = () => {
     });
     setIsImagePopupOpen(true);
     setEscClickListener();
-  }
+  };
 
   //функции слушателей закрытия попапов
-  function setEscClickListener() {
+  const setEscClickListener = () => {
     document.addEventListener("keydown", handleEscClick);
-  }
+  };
 
-  function handleEscClick(evt) {
+  //функция закрытия попапа по нажатию на Esc
+  const handleEscClick = useCallback((evt) => {
     if (evt.key === "Escape") {
       closeAllPopups();
     }
-  }
+  }, []);
 
   //функция закрытия попапов
-  function closeAllPopups(evt) {
+  const closeAllPopups = (evt) => {
     if (evt && evt.target !== evt.currentTarget) {
       return;
     }
@@ -270,9 +242,8 @@ const App = () => {
     setIsDeletePlacePopupOpen(false);
     setIsInfoTooltipOpen(false);
     setDeletedCard(null);
-    setIsInputErrors(null);
     document.removeEventListener("keydown", handleEscClick);
-  }
+  };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -282,11 +253,11 @@ const App = () => {
         onLogout={handleLogout}
       />
       <Switch>
-        <Route path="/sign-up">
-          <Register onRegister={handleRegister} />
-        </Route>
-        <Route path="/sign-in">
+        <Route exact path="/sign-in">
           <Login onLogin={handleLogin} />
+        </Route>
+        <Route exact path="/sign-up">
+          <Register onRegister={handleRegister} />
         </Route>
         <ProtectedRoute
           path="/"
@@ -306,27 +277,18 @@ const App = () => {
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
         onUpdateUser={handleUpdateUser}
-        enableValidation={enableValidation}
-        isInputErrors={isInputErrors}
-        toggleSubmitButtonState={toggleSubmitButtonState}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <EditAvatarPopup
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
         onUpdateAvatar={handleUpdateAvatar}
-        enableValidation={enableValidation}
-        isInputErrors={isInputErrors}
-        toggleSubmitButtonState={toggleSubmitButtonState}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <AddPlacePopup
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
         onAddPlace={handleAddPlaceSubmit}
-        enableValidation={enableValidation}
-        isInputErrors={isInputErrors}
-        toggleSubmitButtonState={toggleSubmitButtonState}
         submitButtonText={!isLoading ? "Создать" : "Сохранение..."}
       />
       <DeletePlacePopup

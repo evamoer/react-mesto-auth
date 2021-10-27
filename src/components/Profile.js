@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-const Profile = ({ onEditProfile, onAddPlace, onEditAvatar }) => {
+export default function Profile({ onEditProfile, onAddPlace, onEditAvatar }) {
   const { avatar, name, about } = useContext(CurrentUserContext);
 
   return (
@@ -27,6 +27,4 @@ const Profile = ({ onEditProfile, onAddPlace, onEditAvatar }) => {
       ></button>
     </section>
   );
-};
-
-export default Profile;
+}

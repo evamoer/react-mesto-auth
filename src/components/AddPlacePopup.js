@@ -1,46 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
+import useFormAndValidation from "../hooks/validationHook";
 
-function AddPlacePopup({
+export default function AddPlacePopup({
   isOpen,
   onClose,
   onAddPlace,
-  enableValidation,
-  isInputErrors,
-  toggleSubmitButtonState,
   submitButtonText,
 }) {
-  const defaultValue = () => {
-    return { name: "", link: "" };
-  };
-
-  const [addPlaceInputValues, setAddPlaceInputValues] = useState(
-    defaultValue()
-  );
-  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(null);
-  const hasEmptyInputs = () => {
-    return Object.values(defaultValue()).some((value) => value === "");
-  };
+  const { values, handleChange, errors, isValid, setValues, resetForm } =
+    useFormAndValidation();
 
   useEffect(() => {
     if (isOpen) {
-      setAddPlaceInputValues(defaultValue());
-      setIsSubmitButtonDisabled(hasEmptyInputs());
+      resetForm();
+      setValues({ name: "", link: "" });
     }
   }, [isOpen]);
 
-  function handleInputChange(evt) {
-    setAddPlaceInputValues({
-      ...addPlaceInputValues,
-      [evt.target.name]: evt.target.value,
-    });
-    enableValidation(evt.target);
-  }
-
-  function handleFormSubmit(evt) {
+  const handleFormSubmit = (evt) => {
     evt.preventDefault();
-    onAddPlace(addPlaceInputValues);
-  }
+    onAddPlace(values);
+  };
 
   return (
     <PopupWithForm
@@ -50,28 +31,25 @@ function AddPlacePopup({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleFormSubmit}
-      isSubmitButtonDisabled={toggleSubmitButtonState(
-        isSubmitButtonDisabled,
-        addPlaceInputValues
-      )}
+      isValid={isValid}
     >
       <div className="popup__input-field">
         <input
           type="text"
           className={`popup__input ${
-            isInputErrors?.name && "popup__input_type_error"
+            errors?.name && "popup__input_type_error"
           }`}
           name="name"
           placeholder="Название"
-          value={addPlaceInputValues.name}
-          onChange={handleInputChange}
+          value={values?.name || ""}
+          onChange={handleChange}
           required
           minLength="2"
           maxLength="30"
         />
-        {isInputErrors?.name && (
+        {errors?.name && (
           <span className="popup__error" id="cardTitleInputError">
-            {isInputErrors.name}
+            {errors?.name}
           </span>
         )}
       </div>
@@ -79,22 +57,20 @@ function AddPlacePopup({
         <input
           type="url"
           className={`popup__input ${
-            isInputErrors?.link && "popup__input_type_error"
+            errors?.link && "popup__input_type_error"
           }`}
           name="link"
           placeholder="Ссылка на картинку"
-          value={addPlaceInputValues.link}
-          onChange={handleInputChange}
+          value={values?.link || ""}
+          onChange={handleChange}
           required
         />
-        {isInputErrors?.link && (
+        {errors?.link && (
           <span className="popup__error" id="cardLinkInputError">
-            {isInputErrors.link}
+            {errors.link}
           </span>
         )}
       </div>
     </PopupWithForm>
   );
 }
-
-export default AddPlacePopup;

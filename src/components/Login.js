@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 
-const Login = ({ onLogin }) => {
+export default function Login({ onLogin }) {
   const [loginInputValues, setLoginInputValues] = useState({
     email: "",
     password: "",
   });
 
-  function handleInputChange(evt) {
+  const handleInputChange = (evt) => {
     const { name, value } = evt.target;
     setLoginInputValues({
       ...loginInputValues,
       [name]: value,
     });
-  }
+  };
 
-  function handleFormSubmit(evt) {
+  const handleFormSubmit = (evt) => {
     evt.preventDefault();
     const { password, email } = loginInputValues;
     onLogin(password, email);
-  }
+  };
 
   return (
     <section className="sign">
@@ -50,6 +50,4 @@ const Login = ({ onLogin }) => {
       </form>
     </section>
   );
-};
-
-export default Login;
+}

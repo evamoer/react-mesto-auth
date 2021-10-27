@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Register = ({ onRegister }) => {
+export default function Register({ onRegister }) {
   const [registerInputValues, setRegisterInputValues] = useState({
     email: "",
     password: "",
   });
 
-  function handleInputChange(evt) {
+  const handleInputChange = (evt) => {
     const { name, value } = evt.target;
     setRegisterInputValues({
       ...registerInputValues,
       [name]: value,
     });
-  }
+  };
 
-  function handleFormSubmit(evt) {
+  const handleFormSubmit = (evt) => {
     evt.preventDefault();
     const { password, email } = registerInputValues;
     onRegister(password, email);
-  }
+  };
 
   return (
     <section className="sign">
@@ -57,6 +57,4 @@ const Register = ({ onRegister }) => {
       </p>
     </section>
   );
-};
-
-export default Register;
+}

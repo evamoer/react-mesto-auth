@@ -15,17 +15,17 @@ function Card({
   const isOwn = owner._id === currentUser._id;
   const isLiked = likes.some((user) => user._id === currentUser._id);
 
-  function handleClick() {
+  const handleClick = () => {
     onCardClick({ name: name, link: link });
-  }
+  };
 
-  function handleLikeClick() {
+  const handleLikeClick = () => {
     onCardLike(likes, _id);
-  }
+  };
 
-  function handleDeleteClick() {
+  const handleDeleteClick = () => {
     onCardDelete(_id);
-  }
+  };
 
   return (
     <li className="gallery-table__item">
