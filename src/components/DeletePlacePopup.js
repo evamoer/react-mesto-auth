@@ -19,6 +19,7 @@ export default function DeletePlacePopup({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleFormSubmit}
+      isValid={true}
     />
   );
 }
