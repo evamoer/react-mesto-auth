@@ -79,9 +79,6 @@ const App = () => {
         })
         .catch(handleError);
     }
-    // else {
-    //   history.push("/");
-    // }
   };
 
   //обработка ошибок при выполнении запросов
@@ -247,8 +244,6 @@ const App = () => {
     setDeletedCard(null);
     document.removeEventListener("keydown", handleEscClick);
   };
-
-  console.log(isLoggedIn);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
