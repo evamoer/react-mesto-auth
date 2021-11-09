@@ -5,15 +5,15 @@ export default function Profile({ onOpenPopup }) {
   const { avatar, name, about } = useContext(CurrentUserContext);
 
   const openEditProfilePopup = () => {
-    onOpenPopup("editProfilePopup");
+    onOpenPopup({ payload: "editProfilePopup" });
   };
 
   const openEditAvatarPopup = () => {
-    onOpenPopup("editAvatarPopup");
+    onOpenPopup({ payload: "editAvatarPopup" });
   };
 
   const openAddPlacePopup = () => {
-    onOpenPopup("addPlacePopup");
+    onOpenPopup({ payload: "addPlacePopup" });
   };
 
   return (

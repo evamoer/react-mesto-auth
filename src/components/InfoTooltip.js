@@ -1,5 +1,12 @@
 import React from "react";
 
+/**
+ * InfoTooltip - компонент попапа с формой добавления карточки в галерею.
+ *
+ * @prop isOpen - пропс состояния попапа: открыт/закрыт.
+ * @prop onClose - пропс с функцией закрытия попапа.
+ * @prop isRegistered - пропс с переменной регистрации пользователя.
+ */
 export default function InfoTooltip({ isOpen, onClose, isRegistered }) {
   const popupClassName = `popup ${isOpen && "popup_opened"}`;
 

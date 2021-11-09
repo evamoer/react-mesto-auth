@@ -1,3 +1,10 @@
+/**
+ * ImagePopup - компонент попапа с полным изображением карточки.
+ *
+ * @prop isOpen - пропс состояния попапа: открыт/закрыт.
+ * @prop onClose - пропс с функцией закрытия попапа.
+ * @prop card - пропс с объектом данными карточки.
+ */
 export default function ImagePopup({ card, isOpen, onClose }) {
   return (
     <div

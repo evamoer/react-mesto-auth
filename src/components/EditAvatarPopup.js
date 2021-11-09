@@ -2,6 +2,15 @@ import React from "react";
 import PopupWithForm from "./PopupWithForm";
 import useFormAndValidation from "../hooks/validationHook";
 
+/**
+ * EditAvatarPopup - компонент попапа с формой изменения аватара пользователя.
+ * Включает в себя компонент PopupWithForm.
+ *
+ * @prop isOpen - пропс состояния попапа: открыт/закрыт.
+ * @prop onClose - пропс с функцией закрытия попапа.
+ * @prop onUpdateAvatar - пропс с функцией обработки данных формы при сабмите.
+ * @prop submitButtonText - пропс с текстом кнопки сабмита (меняется при выполнении запросы к api).
+ */
 export default function EditAvatarPopup({
   isOpen,
   onClose,

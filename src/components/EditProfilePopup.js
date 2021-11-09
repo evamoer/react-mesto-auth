@@ -3,6 +3,15 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import useFormAndValidation from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
 
+/**
+ * EditProfilePopup - компонент попапа с формой добавления карточки в галерею.
+ * Включает в себя компонент PopupWithForm.
+ *
+ * @prop isOpen - пропс состояния попапа: открыт/закрыт.
+ * @prop onClose - пропс с функцией закрытия попапа.
+ * @prop onUpdateUser - пропс с функцией обработки данных формы при сабмите.
+ * @prop submitButtonText - пропс с текстом кнопки сабмита (он меняется при выполнении запроса к api).
+ */
 export default function EditProfilePopup({
   isOpen,
   onClose,
@@ -27,6 +36,7 @@ export default function EditProfilePopup({
       about: values.description,
     });
   };
+  console.log(isValid);
 
   return (
     <PopupWithForm

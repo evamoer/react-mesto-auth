@@ -1,6 +1,14 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 
+/**
+ * DeletePlacePopup - компонент попапа с формой удаления карточки в галерею.
+ * Включает в себя компонент PopupWithForm.
+ *
+ * @prop isOpen - пропс состояния попапа: открыт/закрыт.
+ * @prop onClose - пропс с функцией закрытия попапа.
+ * @prop onApproveDeletePlace - пропс с функцией обработки подтверждения удаления карточки.
+ */
 export default function DeletePlacePopup({
   isOpen,
   onClose,

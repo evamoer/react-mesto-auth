@@ -2,6 +2,13 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoPath from "../images/logo.svg";
 
+/**
+ * Header - компонент хэдера.
+ *
+ * @prop isLoggedIn - пропс с переменной состояние логина пользователя.
+ * @prop userEmail - пропс с с переменной email пользователя.
+ * @prop onLogout - пропс с функцией обработки клика на кнопку Выйти.
+ */
 export default function Header({ isLoggedIn, userEmail, onLogout }) {
   const location = useLocation();
   const currentLocation = location.pathname;
