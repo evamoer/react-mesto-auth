@@ -3,6 +3,7 @@ import { Switch, Route, useHistory } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import * as api from "../utils/api";
 import * as apiAuth from "../utils/apiAuth";
+import { useDispatch, useSelector } from "react-redux";
 
 //импорт компонентов
 import Header from "./Header";
@@ -19,18 +20,45 @@ import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
 
 const App = () => {
+  const dispatch = useDispatch();
+  const {
+    editProfilePopupState,
+    editAvatarPopupState,
+    addPlacePopupState,
+    deletePlacePopupState,
+    imagePopupState,
+    infoTooltipState,
+  } = useSelector((popupState) => popupState);
+
+  const openPopup = (popupType) => {
+    dispatch({ type: "open", preload: popupType });
+    document.addEventListener("keydown", handleEscClick);
+    document.addEventListener("mousedown", handleOverlayClick);
+  };
+  const closePopup = () => {
+    dispatch({ type: "close" });
+    setDeletedCard(null);
+    document.removeEventListener("keydown", handleEscClick);
+    document.removeEventListener("mousedown", handleOverlayClick);
+  };
+  //функция закрытия попапа по нажатию на Esc
+  const handleEscClick = useCallback((evt) => {
+    if (evt.key === "Escape") {
+      closePopup();
+    }
+  }, []);
+
+  const handleOverlayClick = useCallback((evt) => {
+    if (evt.target === evt.currentTarget) {
+      closePopup();
+    }
+  }, []);
+
   //переменные для регистрации и авторизации пользователя
   const history = useHistory();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
-  //переменные для попапов
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
-  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [isDeletePlacePopupOpen, setIsDeletePlacePopupOpen] = useState(false);
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
   //переменные для функционала галереи
   const [currentUser, setCurrentUser] = useState({
     name: "",
@@ -50,11 +78,11 @@ const App = () => {
       .register(password, email)
       .then(() => {
         setIsRegistered(true);
-        setIsInfoTooltipOpen(true);
+        openPopup("infoTooltip");
       })
       .catch((error) => {
         setIsRegistered(false);
-        setIsInfoTooltipOpen(true);
+        openPopup("infoTooltip");
         handleError(error);
       });
   };
@@ -83,7 +111,7 @@ const App = () => {
 
   //обработка ошибок при выполнении запросов
   const handleError = (error) => {
-    console.log(`Ошибка: ${error}`);
+    console.log(error);
   };
 
   //функция логина пользователя
@@ -128,21 +156,20 @@ const App = () => {
   };
 
   const approveDeletePlace = () => {
-    setIsDeletePlacePopupOpen(false);
+    closePopup();
     if (deletedCard !== null) {
       api
         .deleteCard(deletedCard._id)
         .then(
           setCards((state) => state.filter((c) => c._id !== deletedCard._id))
         )
-        .then(() => closeAllPopups())
+        .then(() => closePopup())
         .catch((err) => console.log(`Ошибка: ${err}`));
     }
   };
 
   const handleCardDeleteButtonClick = (cardId) => {
-    setIsDeletePlacePopupOpen(true);
-    setEscClickListener();
+    openPopup("deletePlacePopup");
     setDeletedCard({
       ...deletedCard,
       _id: cardId,
@@ -156,7 +183,7 @@ const App = () => {
       .then((newCard) => {
         setCards([newCard, ...cards]);
       })
-      .then(() => closeAllPopups())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
   };
@@ -177,7 +204,7 @@ const App = () => {
       .then((data) =>
         setCurrentUser({ ...currentUser, name: data.name, about: data.about })
       )
-      .then(() => closeAllPopups())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
   };
@@ -187,25 +214,9 @@ const App = () => {
     api
       .updateAvatar(inputValuesData)
       .then((data) => setCurrentUser({ ...currentUser, avatar: data.avatar }))
-      .then(() => closeAllPopups())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
-  };
-
-  //функции открытия попапов
-  const handleEditProfileClick = () => {
-    setIsEditProfilePopupOpen(true);
-    setEscClickListener();
-  };
-
-  const handleAddPlaceClick = () => {
-    setIsAddPlacePopupOpen(true);
-    setEscClickListener();
-  };
-
-  const handleEditAvatarClick = () => {
-    setIsEditAvatarPopupOpen(true);
-    setEscClickListener();
   };
 
   const handleCardClick = (card) => {
@@ -214,35 +225,7 @@ const App = () => {
       name: card.name,
       link: card.link,
     });
-    setIsImagePopupOpen(true);
-    setEscClickListener();
-  };
-
-  //функции слушателей закрытия попапов
-  const setEscClickListener = () => {
-    document.addEventListener("keydown", handleEscClick);
-  };
-
-  //функция закрытия попапа по нажатию на Esc
-  const handleEscClick = useCallback((evt) => {
-    if (evt.key === "Escape") {
-      closeAllPopups();
-    }
-  }, []);
-
-  //функция закрытия попапов
-  const closeAllPopups = (evt) => {
-    if (evt && evt.target !== evt.currentTarget) {
-      return;
-    }
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsEditAvatarPopupOpen(false);
-    setIsImagePopupOpen(false);
-    setIsDeletePlacePopupOpen(false);
-    setIsInfoTooltipOpen(false);
-    setDeletedCard(null);
-    document.removeEventListener("keydown", handleEscClick);
+    openPopup("imagePopup");
   };
 
   return (
@@ -263,9 +246,7 @@ const App = () => {
           path="/"
           isLoggedIn={isLoggedIn}
           component={Main}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
+          onOpenPopup={openPopup}
           onImageCard={handleCardClick}
           cards={cards}
           onCardLike={handleCardLike}
@@ -274,36 +255,36 @@ const App = () => {
         {isLoggedIn && <Footer />}
       </Switch>
       <EditProfilePopup
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
+        isOpen={editProfilePopupState}
+        onClose={closePopup}
         onUpdateUser={handleUpdateUser}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <EditAvatarPopup
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
+        isOpen={editAvatarPopupState}
+        onClose={closePopup}
         onUpdateAvatar={handleUpdateAvatar}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <AddPlacePopup
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
+        isOpen={addPlacePopupState}
+        onClose={closePopup}
         onAddPlace={handleAddPlaceSubmit}
         submitButtonText={!isLoading ? "Создать" : "Сохранение..."}
       />
       <DeletePlacePopup
-        isOpen={isDeletePlacePopupOpen}
-        onClose={closeAllPopups}
+        isOpen={deletePlacePopupState}
+        onClose={closePopup}
         onApproveDeletePlace={approveDeletePlace}
       />
       <ImagePopup
         card={selectedCard}
-        isOpen={isImagePopupOpen}
-        onClose={closeAllPopups}
+        isOpen={imagePopupState}
+        onClose={closePopup}
       />
       <InfoTooltip
-        isOpen={isInfoTooltipOpen}
-        onClose={closeAllPopups}
+        isOpen={infoTooltipState}
+        onClose={closePopup}
         isRegistered={isRegistered}
       />
     </CurrentUserContext.Provider>

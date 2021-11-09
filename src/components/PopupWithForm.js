@@ -9,7 +9,6 @@ export default function PopupWithForm({
   isValid,
 }) {
   const popupClassName = `popup ${isOpen && "popup_opened"}`;
-
   return (
     <div className={popupClassName} onMouseDown={onClose}>
       <div className="popup__container">

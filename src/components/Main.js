@@ -3,9 +3,7 @@ import Profile from "./Profile";
 import Gallery from "./Gallery";
 
 export default function Main({
-  onEditProfile,
-  onAddPlace,
-  onEditAvatar,
+  onOpenPopup,
   onImageCard,
   cards,
   onCardLike,
@@ -13,11 +11,7 @@ export default function Main({
 }) {
   return (
     <main className="content section page__content">
-      <Profile
-        onEditProfile={onEditProfile}
-        onAddPlace={onAddPlace}
-        onEditAvatar={onEditAvatar}
-      />
+      <Profile onOpenPopup={onOpenPopup} />
       <Gallery
         onImageCard={onImageCard}
         cards={cards}
