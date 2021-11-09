@@ -20,7 +20,10 @@ import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
 
 const App = () => {
+  //подключаем useDispatch() из библиотеки "react-redux"
   const dispatch = useDispatch();
+  //используем useSelector из библиотеки "react-redux"
+  //для определения дефолтных состояний переменных всех попапов
   const {
     editProfilePopupState,
     editAvatarPopupState,
@@ -28,37 +31,42 @@ const App = () => {
     deletePlacePopupState,
     imagePopupState,
     infoTooltipState,
-  } = useSelector((popupState) => popupState);
-
+  } = useSelector((state) => state.popup);
+  //функция открытия попапа в зависимости от его типа,
+  //одновременно добавляются слушатели на клик по оверлэю и нажатию на Esc
   const openPopup = (popupType) => {
     dispatch({ type: "open", preload: popupType });
     document.addEventListener("keydown", handleEscClick);
     document.addEventListener("mousedown", handleOverlayClick);
   };
+  //функция закрытия попапа в зависимости от его типа,
+  //одновременно удаляются слушатели на клик по оверлэю и нажатию на Esc
+  //и сбрасываются данные удаляемой из галереи карточки
   const closePopup = () => {
     dispatch({ type: "close" });
     setDeletedCard(null);
     document.removeEventListener("keydown", handleEscClick);
     document.removeEventListener("mousedown", handleOverlayClick);
   };
-  //функция закрытия попапа по нажатию на Esc
+  //обработчик закрытия попапа по нажатию на клавишу Esc
   const handleEscClick = useCallback((evt) => {
     if (evt.key === "Escape") {
       closePopup();
     }
   }, []);
-
+  //обработчик закрытия попапа по клику на оверлэй
   const handleOverlayClick = useCallback((evt) => {
     if (evt.target === evt.currentTarget) {
       closePopup();
     }
   }, []);
-
   //переменные для регистрации и авторизации пользователя
   const history = useHistory();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [isRegistered, setIsRegistered] = useState(false);
+  //используем useSelector из библиотеки "react-redux"
+  //для определения дефолтных состояний переменных isRegistered, isLoggedIn
+  const { isRegistered, isLoggedIn, userEmail } = useSelector(
+    (state) => state.auth
+  );
   //переменные для функционала галереи
   const [currentUser, setCurrentUser] = useState({
     name: "",
@@ -72,16 +80,18 @@ const App = () => {
   const [deletedCard, setDeletedCard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  //функция регистрации пользователя
+  //обработчик регистрации пользователя
   const handleRegister = (password, email) => {
     apiAuth
       .register(password, email)
       .then(() => {
-        setIsRegistered(true);
+        //устанавливаем, что пользователь зарегистрирован
+        dispatch({ type: "registered" });
         openPopup("infoTooltip");
       })
       .catch((error) => {
-        setIsRegistered(false);
+        //устанавливаем, что пользователь незарегистрирован
+        dispatch({ type: "unregistered" });
         openPopup("infoTooltip");
         handleError(error);
       });
@@ -101,8 +111,8 @@ const App = () => {
         .then((user) => {
           const { data } = user;
           const { email } = data;
-          setUserEmail(email);
-          setIsLoggedIn(true);
+          //устанавливаем, что пользователь залогинен, сохраняем в состояние его почту
+          dispatch({ type: "login", payload: email });
           history.push("/");
         })
         .catch(handleError);
@@ -114,7 +124,7 @@ const App = () => {
     console.log(error);
   };
 
-  //функция логина пользователя
+  //обработчик логина пользователя
   const handleLogin = (password, email) => {
     apiAuth
       .authorize(password, email)
@@ -128,11 +138,11 @@ const App = () => {
       .catch(handleError);
   };
 
-  //функция выхода из аккаунта текущего пользователя
+  //обработчик выхода из аккаунта текущего пользователя
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setUserEmail("");
-    setIsLoggedIn(false);
+    //устанавливаем, что пользователь разлогинен
+    dispatch({ type: "logout" });
     history.push("/sign-in");
   };
 
@@ -145,6 +155,7 @@ const App = () => {
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
+  //обработчик клика по кнопке лайка карточки
   const handleCardLike = (likes, cardId) => {
     const isLiked = likes.some((user) => user._id === currentUser._id);
     api
@@ -168,6 +179,7 @@ const App = () => {
     }
   };
 
+  //обработчик нажатия на кнопку удаления карточки
   const handleCardDeleteButtonClick = (cardId) => {
     openPopup("deletePlacePopup");
     setDeletedCard({
@@ -176,6 +188,7 @@ const App = () => {
     });
   };
 
+  //обработчик нажатия на сабмит добавления новой карточки
   const handleAddPlaceSubmit = (inputValuesData) => {
     setIsLoading(true);
     api
@@ -197,6 +210,7 @@ const App = () => {
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
+  //обработчик обновления данных в профиле пользователя
   const handleUpdateUser = (inputValuesData) => {
     setIsLoading(true);
     api
@@ -209,6 +223,7 @@ const App = () => {
       .finally(() => setIsLoading(false));
   };
 
+  //обработчик обновления аватара пользователя
   const handleUpdateAvatar = (inputValuesData) => {
     setIsLoading(true);
     api
@@ -219,6 +234,7 @@ const App = () => {
       .finally(() => setIsLoading(false));
   };
 
+  //обработчик клика по изображению карточки
   const handleCardClick = (card) => {
     setSelectedCard({
       ...selectedCard,
