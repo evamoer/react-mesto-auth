@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 /**
  * Register - компонент со страницей регистрации пользователя.
  *
- * @prop onRegister - функция-обработчки данных, вводимых пользователем в форму, при регистрации.
+ * @prop onRegister - функция-обработки данных, вводимых пользователем в форму, при регистрации.
  */
 export default function Register({ onRegister }) {
   const [registerInputValues, setRegisterInputValues] = useState({

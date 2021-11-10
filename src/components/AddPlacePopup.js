@@ -1,22 +1,23 @@
 import React, { useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 import useFormAndValidation from "../hooks/validationHook";
+import { useSelector } from "react-redux";
 
 /**
  * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
  * Включает в себя компонент PopupWithForm.
  *
- * @prop isOpen - пропс состояния попапа: открыт/закрыт.
  * @prop onClose - пропс с функцией закрытия попапа.
  * @prop onAddPlace - пропс с функцией обработки данных формы при сабмите.
  * @prop submitButtonText - пропс с текстом кнопки сабмита (меняется при выполнении запросы к api).
  */
 export default function AddPlacePopup({
-  isOpen,
   onClose,
   onAddPlace,
   submitButtonText,
 }) {
+  const { addPlacePopupState } = useSelector((state) => state.popup);
+
   /**
    * Параметры для валидации формы.
    */
@@ -27,11 +28,11 @@ export default function AddPlacePopup({
    * Хук установки начального состояния формы при открытии попапа.
    */
   useEffect(() => {
-    if (isOpen) {
+    if (addPlacePopupState) {
       resetForm();
       setValues({ name: "", link: "" });
     }
-  }, [isOpen]);
+  }, [addPlacePopupState]);
 
   /**
    * Функция-обработчик сабмита формы.
@@ -46,7 +47,7 @@ export default function AddPlacePopup({
       title="Новое место"
       name="addCardForm"
       submitButtonText={submitButtonText}
-      isOpen={isOpen}
+      isOpen={addPlacePopupState}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       isValid={isValid}

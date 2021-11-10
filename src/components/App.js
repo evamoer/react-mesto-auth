@@ -11,8 +11,6 @@ import {
   registerAction,
   unregisterAction,
 } from "../store/authReducer";
-
-//импорт компонентов
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -34,17 +32,7 @@ import InfoTooltip from "./InfoTooltip";
 const App = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const {
-    editProfilePopupState,
-    editAvatarPopupState,
-    addPlacePopupState,
-    deletePlacePopupState,
-    imagePopupState,
-    infoTooltipState,
-  } = useSelector((state) => state.popup);
-  const { isRegistered, isLoggedIn, userEmail } = useSelector(
-    (state) => state.auth
-  );
+  const { isLoggedIn } = useSelector((state) => state.auth);
   const [currentUser, setCurrentUser] = useState({
     name: "",
     about: "",
@@ -302,11 +290,7 @@ const App = () => {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header
-        isLoggedIn={isLoggedIn}
-        userEmail={userEmail}
-        onLogout={handleLogout}
-      />
+      <Header onLogout={handleLogout} />
       <Switch>
         <Route exact path="/sign-in">
           <Login onLogin={handleLogin} />
@@ -316,7 +300,6 @@ const App = () => {
         </Route>
         <ProtectedRoute
           path="/"
-          isLoggedIn={isLoggedIn}
           component={Main}
           onOpenPopup={openPopup}
           onImageCard={handleCardClick}
@@ -327,38 +310,26 @@ const App = () => {
         {isLoggedIn && <Footer />}
       </Switch>
       <EditProfilePopup
-        isOpen={editProfilePopupState}
         onClose={closePopup}
         onUpdateUser={handleUpdateUser}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <EditAvatarPopup
-        isOpen={editAvatarPopupState}
         onClose={closePopup}
         onUpdateAvatar={handleUpdateAvatar}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <AddPlacePopup
-        isOpen={addPlacePopupState}
         onClose={closePopup}
         onAddPlace={handleAddPlaceSubmit}
         submitButtonText={!isLoading ? "Создать" : "Сохранение..."}
       />
       <DeletePlacePopup
-        isOpen={deletePlacePopupState}
         onClose={closePopup}
         onApproveDeletePlace={approveDeletePlace}
       />
-      <ImagePopup
-        card={selectedCard}
-        isOpen={imagePopupState}
-        onClose={closePopup}
-      />
-      <InfoTooltip
-        isOpen={infoTooltipState}
-        onClose={closePopup}
-        isRegistered={isRegistered}
-      />
+      <ImagePopup card={selectedCard} onClose={closePopup} />
+      <InfoTooltip onClose={closePopup} />
     </CurrentUserContext.Provider>
   );
 };
