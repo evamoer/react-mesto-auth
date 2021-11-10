@@ -24,7 +24,6 @@ export default function EditProfilePopup({
 
   useEffect(() => {
     if (isOpen) {
-      resetForm();
       setValues({ name, description: about });
     }
   }, [isOpen]);
@@ -36,7 +35,6 @@ export default function EditProfilePopup({
       about: values.description,
     });
   };
-  console.log(isValid);
 
   return (
     <PopupWithForm
