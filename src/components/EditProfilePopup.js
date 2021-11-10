@@ -2,23 +2,31 @@ import React, { useEffect, useContext } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import useFormAndValidation from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
+import { useSelector } from "react-redux";
 
+/**
+ * EditProfilePopup - компонент попапа с формой добавления карточки в галерею.
+ * Включает в себя компонент PopupWithForm.
+ *
+ * @prop onClose - пропс с функцией закрытия попапа.
+ * @prop onUpdateUser - пропс с функцией обработки данных формы при сабмите.
+ * @prop submitButtonText - пропс с текстом кнопки сабмита (он меняется при выполнении запроса к api).
+ */
 export default function EditProfilePopup({
-  isOpen,
   onClose,
   onUpdateUser,
   submitButtonText,
 }) {
-  const { values, handleChange, errors, isValid, setValues, resetForm } =
+  const { editProfilePopupState } = useSelector((state) => state.popup);
+  const { values, handleChange, errors, isValid, setValues } =
     useFormAndValidation();
   const { name, about } = useContext(CurrentUserContext);
 
   useEffect(() => {
-    if (isOpen) {
-      resetForm();
+    if (editProfilePopupState) {
       setValues({ name, description: about });
     }
-  }, [isOpen]);
+  }, [editProfilePopupState]);
 
   const handleFormSubmit = (evt) => {
     evt.preventDefault();
@@ -33,7 +41,7 @@ export default function EditProfilePopup({
       title="Редактировать профиль"
       name="editProfileForm"
       submitButtonText={submitButtonText}
-      isOpen={isOpen}
+      isOpen={editProfilePopupState}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       isValid={isValid}

@@ -1,3 +1,6 @@
+/**
+ * Footer - компонент футера.
+ */
 export default function Footer() {
   return (
     <footer className="footer section page__footer">

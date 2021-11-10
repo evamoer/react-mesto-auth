@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 
+/**
+ * Login - компонент со страницей логина пользователя.
+ *
+ * @prop onLogin - функция-обработчки данных, вводимых пользователем в форму, при логине.
+ */
 export default function Login({ onLogin }) {
   const [loginInputValues, setLoginInputValues] = useState({
     email: "",

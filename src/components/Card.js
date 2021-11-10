@@ -1,7 +1,19 @@
 import React, { useContext } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Card({
+/**
+ * Card - компонент карточки в галерее.
+ *
+ * @prop name - пропс с названием карточки.
+ * @prop link - пропс с ссылкой на изображение карточки.
+ * @prop likes - пропс с массивом пользователей, лайкнувших карточку.
+ * @prop owner - пропс с массивом данных пользователя, загрузившего карточку.
+ * @prop _id - пропс с id карточки.
+ * @prop onCardClick - пропс с функцией обработки клика на изображение карточки.
+ * @prop onCardLike - пропс с функцией обработки клика на кнопку лайка карточки.
+ * @prop onCardDelete - пропс с функцией обработчки клика на кнопку удаления карточки.
+ */
+export default function Card({
   name,
   link,
   likes,
@@ -57,5 +69,3 @@ function Card({
     </li>
   );
 }
-
-export default Card;

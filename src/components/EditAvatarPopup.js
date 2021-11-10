@@ -1,22 +1,31 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 import useFormAndValidation from "../hooks/validationHook";
+import { useSelector } from "react-redux";
 
+/**
+ * EditAvatarPopup - компонент попапа с формой изменения аватара пользователя.
+ * Включает в себя компонент PopupWithForm.
+ *
+ * @prop onClose - пропс с функцией закрытия попапа.
+ * @prop onUpdateAvatar - пропс с функцией обработки данных формы при сабмите.
+ * @prop submitButtonText - пропс с текстом кнопки сабмита (меняется при выполнении запросы к api).
+ */
 export default function EditAvatarPopup({
-  isOpen,
   onClose,
   onUpdateAvatar,
   submitButtonText,
 }) {
+  const { editAvatarPopupState } = useSelector((state) => state.popup);
   const { values, handleChange, errors, isValid, setValues, resetForm } =
     useFormAndValidation();
 
   React.useEffect(() => {
-    if (isOpen) {
+    if (editAvatarPopupState) {
       resetForm();
       setValues({ avatar: "" });
     }
-  }, [isOpen]);
+  }, [editAvatarPopupState]);
 
   const handleFormSubmit = (evt) => {
     evt.preventDefault();
@@ -28,7 +37,7 @@ export default function EditAvatarPopup({
       title="Обновить аватар"
       name="editAvatarForm"
       submitButtonText={submitButtonText}
-      isOpen={isOpen}
+      isOpen={editAvatarPopupState}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       isValid={isValid}

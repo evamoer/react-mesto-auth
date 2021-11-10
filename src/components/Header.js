@@ -1,10 +1,17 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoPath from "../images/logo.svg";
+import { useSelector } from "react-redux";
 
-export default function Header({ isLoggedIn, userEmail, onLogout }) {
+/**
+ * Header - компонент хэдера.
+ *
+ * @prop onLogout - пропс с функцией обработки клика на кнопку Выйти.
+ */
+export default function Header({ onLogout }) {
   const location = useLocation();
   const currentLocation = location.pathname;
+  const { isLoggedIn, userEmail } = useSelector((state) => state.auth);
 
   return (
     <header className="header page__header">

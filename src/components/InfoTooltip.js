@@ -1,7 +1,15 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
-export default function InfoTooltip({ isOpen, onClose, isRegistered }) {
-  const popupClassName = `popup ${isOpen && "popup_opened"}`;
+/**
+ * InfoTooltip - компонент попапа с формой добавления карточки в галерею.
+ *
+ * @prop onClose - пропс с функцией закрытия попапа.
+ */
+export default function InfoTooltip({ onClose }) {
+  const { infoTooltipState } = useSelector((state) => state.popup);
+  const { isRegistered } = useSelector((state) => state.auth);
+  const popupClassName = `popup ${infoTooltipState && "popup_opened"}`;
 
   const title = isRegistered
     ? "Вы успешно зарегистрировались!"

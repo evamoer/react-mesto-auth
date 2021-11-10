@@ -3,8 +3,14 @@ import { Switch, Route, useHistory } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import * as api from "../utils/api";
 import * as apiAuth from "../utils/apiAuth";
-
-//импорт компонентов
+import { useDispatch, useSelector } from "react-redux";
+import { openPopupAction, closePopupAction } from "../store/popupReducer";
+import {
+  loginAction,
+  logoutAction,
+  registerAction,
+  unregisterAction,
+} from "../store/authReducer";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -18,20 +24,15 @@ import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
 
+/**
+ * App - главный компонент приложения.
+ * Включает в себя все компоненты и логику работу приложения.
+ */
+
 const App = () => {
-  //переменные для регистрации и авторизации пользователя
+  const dispatch = useDispatch();
   const history = useHistory();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [isRegistered, setIsRegistered] = useState(false);
-  //переменные для попапов
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
-  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [isDeletePlacePopupOpen, setIsDeletePlacePopupOpen] = useState(false);
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
-  //переменные для функционала галереи
+  const { isLoggedIn } = useSelector((state) => state.auth);
   const [currentUser, setCurrentUser] = useState({
     name: "",
     about: "",
@@ -44,27 +45,70 @@ const App = () => {
   const [deletedCard, setDeletedCard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  //функция регистрации пользователя
+  /**
+   * Функция открытия попапа. Дополнительно устанавливается слушатель на клик по клавише Esc.
+   *
+   * @param payload - тип попапа
+   */
+
+  const openPopup = ({ payload }) => {
+    dispatch(openPopupAction(payload));
+    document.addEventListener("keydown", handleEscClick);
+  };
+
+  /**
+   * Функция закрытия попапа. Дополнительно удаляется слушатель на клик по клавише Esc.
+   */
+  const closePopup = (evt) => {
+    //если клик не по оверлэю, то не закрываем попап
+    if (evt && evt.target !== evt.currentTarget) {
+      return;
+    }
+    dispatch(closePopupAction());
+    setDeletedCard(null);
+    document.removeEventListener("keydown", handleEscClick);
+  };
+
+  /**
+   * Обработчик нажатия на клавишу Escape.
+   */
+  const handleEscClick = useCallback((evt) => {
+    if (evt.key === "Escape") {
+      closePopup();
+    }
+  }, []);
+
+  /**
+   * Функция-обработчик регистрации пользователя: отправляет запрос на api с параметрами password, email.
+   *
+   * @param password - пароль, вводимый пользователем
+   * @param email - email, вводимый пользователя
+   */
   const handleRegister = (password, email) => {
     apiAuth
       .register(password, email)
       .then(() => {
-        setIsRegistered(true);
-        setIsInfoTooltipOpen(true);
+        dispatch(registerAction());
+        openPopup({ payload: "infoTooltip" });
       })
       .catch((error) => {
-        setIsRegistered(false);
-        setIsInfoTooltipOpen(true);
+        dispatch(unregisterAction());
+        openPopup({ payload: "infoTooltip" });
         handleError(error);
       });
   };
 
-  //проверка при открытии сайта: залогинен ли текущий пользователь
+  /**
+   * Хук для проверки наличия токена пользователя в LocalStorage при открытии сайта.
+   */
   useEffect(() => {
     checkUserToken();
   }, []);
 
-  //проверка токена в localStorage: если да, то устанавливаем, что пользователь залогинен
+  /**
+   * Проверка токена в localStorage. При его наличии, устанавливаем, что пользователь залогинен,
+   * и перенаправляем на "/".
+   */
   const checkUserToken = () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -73,20 +117,26 @@ const App = () => {
         .then((user) => {
           const { data } = user;
           const { email } = data;
-          setUserEmail(email);
-          setIsLoggedIn(true);
+          dispatch(loginAction(email));
           history.push("/");
         })
         .catch(handleError);
     }
   };
 
-  //обработка ошибок при выполнении запросов
+  /**
+   * Функция-обработчик ошибок, возникающих при запросах.
+   */
   const handleError = (error) => {
-    console.log(`Ошибка: ${error}`);
+    console.log(error);
   };
 
-  //функция логина пользователя
+  /**
+   * Функция-обработчик логина пользователя: отправляет запрос на api с параметрами password, email.
+   *
+   * @param password - пароль, вводимый пользователем
+   * @param email - email, вводимый пользователя
+   */
   const handleLogin = (password, email) => {
     apiAuth
       .authorize(password, email)
@@ -100,16 +150,18 @@ const App = () => {
       .catch(handleError);
   };
 
-  //функция выхода из аккаунта текущего пользователя
+  /**
+   * Функция-обработчик разлогинивания пользователя из аккаунта: удаление token из LocalStorage.
+   */
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setUserEmail("");
-    setIsLoggedIn(false);
+    dispatch(logoutAction());
     history.push("/sign-in");
   };
 
-  //запрос всех карточек с сервера, обновление стейта с карточками,
-  //обработчики лайка и удаления карточки
+  /**
+   * Хук с запросом на api всех карточек с сервера, обновления стета с карточками.
+   */
   useEffect(() => {
     api
       .getCards()
@@ -117,6 +169,12 @@ const App = () => {
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
+  /**
+   * Функция-обработчик нажатия на кнопку лайка карточки.
+   *
+   * @param likes - массив с пользователями, лайкнувшими карточку.
+   * @param cardId - id карточки, выбранной для установки лайка.
+   */
   const handleCardLike = (likes, cardId) => {
     const isLiked = likes.some((user) => user._id === currentUser._id);
     api
@@ -127,28 +185,40 @@ const App = () => {
       .catch((err) => console.log(`Ошибка: ${err}`));
   };
 
+  /**
+   * Функция подтверждения удаления карточки.
+   */
   const approveDeletePlace = () => {
-    setIsDeletePlacePopupOpen(false);
+    closePopup();
     if (deletedCard !== null) {
       api
         .deleteCard(deletedCard._id)
         .then(
           setCards((state) => state.filter((c) => c._id !== deletedCard._id))
         )
-        .then(() => closeAllPopups())
+        .then(() => closePopup())
         .catch((err) => console.log(`Ошибка: ${err}`));
     }
   };
 
+  /**
+   * Функция-обработчик нажатия клика по кнопке удаления карточки.
+   *
+   * @param cardId - id карточки, выбранной для удаления.
+   */
   const handleCardDeleteButtonClick = (cardId) => {
-    setIsDeletePlacePopupOpen(true);
-    setEscClickListener();
+    openPopup({ payload: "deletePlacePopup" });
     setDeletedCard({
       ...deletedCard,
       _id: cardId,
     });
   };
 
+  /**
+   * Функция-обработчик нажатия на сабмит формы добавления новой карточки.
+   *
+   * @param inputValuesData - данные новой карточки для добавления в галерею, введенные в форму пользователем..
+   */
   const handleAddPlaceSubmit = (inputValuesData) => {
     setIsLoading(true);
     api
@@ -156,13 +226,14 @@ const App = () => {
       .then((newCard) => {
         setCards([newCard, ...cards]);
       })
-      .then(() => closeAllPopups())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
   };
 
-  //запрос данных текущего пользователя,
-  //обработчики обновления данных пользователя и его аватара
+  /**
+   * Хук с запросом на api данных текущего пользователя.
+   */
   useEffect(() => {
     api
       .getUserData()
@@ -170,6 +241,11 @@ const App = () => {
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
+  /**
+   * Функция-обработчик нажатия на кнопку удаления карточки.
+   *
+   * @param inputValuesData - новые данные профиля, введенные в форму пользователем.
+   */
   const handleUpdateUser = (inputValuesData) => {
     setIsLoading(true);
     api
@@ -177,81 +253,44 @@ const App = () => {
       .then((data) =>
         setCurrentUser({ ...currentUser, name: data.name, about: data.about })
       )
-      .then(() => closeAllPopups())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
   };
 
+  /**
+   * Функция-обработчик нажатия на кнопку удаления карточки.
+   *
+   * @param inputValuesData - новые данные аватара (ссылка на изображение), введенные в форму пользователем.
+   */
   const handleUpdateAvatar = (inputValuesData) => {
     setIsLoading(true);
     api
       .updateAvatar(inputValuesData)
       .then((data) => setCurrentUser({ ...currentUser, avatar: data.avatar }))
-      .then(() => closeAllPopups())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
   };
 
-  //функции открытия попапов
-  const handleEditProfileClick = () => {
-    setIsEditProfilePopupOpen(true);
-    setEscClickListener();
-  };
-
-  const handleAddPlaceClick = () => {
-    setIsAddPlacePopupOpen(true);
-    setEscClickListener();
-  };
-
-  const handleEditAvatarClick = () => {
-    setIsEditAvatarPopupOpen(true);
-    setEscClickListener();
-  };
-
+  /**
+   * Функция-обработчик нажатия на изображение карточки.
+   * По клику открывается попап с полным изображением.
+   *
+   * @param card - объект с данными карточки (название name, ссылка link)
+   */
   const handleCardClick = (card) => {
     setSelectedCard({
       ...selectedCard,
       name: card.name,
       link: card.link,
     });
-    setIsImagePopupOpen(true);
-    setEscClickListener();
-  };
-
-  //функции слушателей закрытия попапов
-  const setEscClickListener = () => {
-    document.addEventListener("keydown", handleEscClick);
-  };
-
-  //функция закрытия попапа по нажатию на Esc
-  const handleEscClick = useCallback((evt) => {
-    if (evt.key === "Escape") {
-      closeAllPopups();
-    }
-  }, []);
-
-  //функция закрытия попапов
-  const closeAllPopups = (evt) => {
-    if (evt && evt.target !== evt.currentTarget) {
-      return;
-    }
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsEditAvatarPopupOpen(false);
-    setIsImagePopupOpen(false);
-    setIsDeletePlacePopupOpen(false);
-    setIsInfoTooltipOpen(false);
-    setDeletedCard(null);
-    document.removeEventListener("keydown", handleEscClick);
+    openPopup({ payload: "imagePopup" });
   };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header
-        isLoggedIn={isLoggedIn}
-        userEmail={userEmail}
-        onLogout={handleLogout}
-      />
+      <Header onLogout={handleLogout} />
       <Switch>
         <Route exact path="/sign-in">
           <Login onLogin={handleLogin} />
@@ -261,11 +300,8 @@ const App = () => {
         </Route>
         <ProtectedRoute
           path="/"
-          isLoggedIn={isLoggedIn}
           component={Main}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
+          onOpenPopup={openPopup}
           onImageCard={handleCardClick}
           cards={cards}
           onCardLike={handleCardLike}
@@ -274,38 +310,26 @@ const App = () => {
         {isLoggedIn && <Footer />}
       </Switch>
       <EditProfilePopup
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
+        onClose={closePopup}
         onUpdateUser={handleUpdateUser}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <EditAvatarPopup
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
+        onClose={closePopup}
         onUpdateAvatar={handleUpdateAvatar}
         submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <AddPlacePopup
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
+        onClose={closePopup}
         onAddPlace={handleAddPlaceSubmit}
         submitButtonText={!isLoading ? "Создать" : "Сохранение..."}
       />
       <DeletePlacePopup
-        isOpen={isDeletePlacePopupOpen}
-        onClose={closeAllPopups}
+        onClose={closePopup}
         onApproveDeletePlace={approveDeletePlace}
       />
-      <ImagePopup
-        card={selectedCard}
-        isOpen={isImagePopupOpen}
-        onClose={closeAllPopups}
-      />
-      <InfoTooltip
-        isOpen={isInfoTooltipOpen}
-        onClose={closeAllPopups}
-        isRegistered={isRegistered}
-      />
+      <ImagePopup card={selectedCard} onClose={closePopup} />
+      <InfoTooltip onClose={closePopup} />
     </CurrentUserContext.Provider>
   );
 };
