@@ -3,15 +3,23 @@ import { useSelector } from "react-redux";
 /**
  * ImagePopup - компонент попапа с полным изображением карточки.
  *
- * @prop onClose - пропс с функцией закрытия попапа.
- * @prop card - пропс с объектом данными карточки.
+ * @prop onClose - функция закрытия попапа.
  */
-export default function ImagePopup({ card, onClose }) {
+export default function ImagePopup({ onClose }) {
+  /**
+   * Параметр состояния попапа: true - открыт, false - закрыт.
+   */
   const { imagePopupState } = useSelector((state) => state.popup);
+
+  /**
+   * Параметр состояния карточки.
+   */
+  const card = useSelector((state) => state.card);
+
   return (
     <div
       className={`popup popup_type_full-image ${
-        card && imagePopupState && "popup_opened"
+        card.name && card.link && imagePopupState && "popup_opened"
       }`}
       onMouseDown={onClose}
     >
@@ -22,13 +30,9 @@ export default function ImagePopup({ card, onClose }) {
           type="button"
           aria-label="Закрыть всплывающее окно"
         ></button>
-        <img
-          src={card && card.link}
-          alt={card && card.name}
-          className="popup__full-image"
-        />
+        <img src={card.link} alt={card.name} className="popup__full-image" />
         <figcaption className="popup__full-image-caption">
-          {card && card.name}
+          {card.name}
         </figcaption>
       </figure>
     </div>

@@ -1,19 +1,36 @@
-import React, { useContext } from "react";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import React from "react";
+import { useSelector } from "react-redux";
 
+/**
+ * Profile - компонент профиля.
+ *
+ * @prop onOpenPopup - обработчик клика на кнопки открытия попапов.
+ */
 export default function Profile({ onOpenPopup }) {
-  const { avatar, name, about } = useContext(CurrentUserContext);
+  /**
+   * Параметры текущего пользователя.
+   */
+  const { avatar, name, about } = useSelector((state) => state.user);
 
+  /**
+   * Обработчик клика на кнопку открытия попапа редактирования профиля.
+   */
   const openEditProfilePopup = () => {
-    onOpenPopup({ payload: "editProfilePopup" });
+    onOpenPopup("editProfilePopup");
   };
 
+  /**
+   * Обработчик клика на кнопку открытия попапа изменения аватара.
+   */
   const openEditAvatarPopup = () => {
-    onOpenPopup({ payload: "editAvatarPopup" });
+    onOpenPopup("editAvatarPopup");
   };
 
+  /**
+   * Обработчик клика на кнопку открытия попапа добавления карточки.
+   */
   const openAddPlacePopup = () => {
-    onOpenPopup({ payload: "addPlacePopup" });
+    onOpenPopup("addPlacePopup");
   };
 
   return (

@@ -1,5 +1,4 @@
 import React, { useEffect, useContext } from "react";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import useFormAndValidation from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
 import { useSelector } from "react-redux";
@@ -8,26 +7,42 @@ import { useSelector } from "react-redux";
  * EditProfilePopup - компонент попапа с формой добавления карточки в галерею.
  * Включает в себя компонент PopupWithForm.
  *
- * @prop onClose - пропс с функцией закрытия попапа.
- * @prop onUpdateUser - пропс с функцией обработки данных формы при сабмите.
- * @prop submitButtonText - пропс с текстом кнопки сабмита (он меняется при выполнении запроса к api).
+ * @prop onClose - функция закрытия попапа.
+ * @prop onUpdateUser - обработчик данных формы при сабмите.
  */
-export default function EditProfilePopup({
-  onClose,
-  onUpdateUser,
-  submitButtonText,
-}) {
+export default function EditProfilePopup({ onClose, onUpdateUser }) {
+  /**
+   * Параметр состояния попапа: true - открыт, false - закрыт.
+   */
   const { editProfilePopupState } = useSelector((state) => state.popup);
+
+  /**
+   * Параметры для валидации формы.
+   */
   const { values, handleChange, errors, isValid, setValues } =
     useFormAndValidation();
-  const { name, about } = useContext(CurrentUserContext);
 
+  /**
+   * Параметры текущего пользователя.
+   */
+  const { name, about } = useSelector((state) => state.user);
+
+  /**
+   * Параметр загрузки данных на сервер.
+   */
+  const isLoading = useSelector((state) => state.loading.isLoading);
+  /**
+   * Хук установки начального состояния формы при открытии попапа.
+   */
   useEffect(() => {
     if (editProfilePopupState) {
       setValues({ name, description: about });
     }
   }, [editProfilePopupState]);
 
+  /**
+   * Обработчик сабмита формы.
+   */
   const handleFormSubmit = (evt) => {
     evt.preventDefault();
     onUpdateUser({
@@ -40,7 +55,7 @@ export default function EditProfilePopup({
     <PopupWithForm
       title="Редактировать профиль"
       name="editProfileForm"
-      submitButtonText={submitButtonText}
+      submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       isOpen={editProfilePopupState}
       onClose={onClose}
       onSubmit={handleFormSubmit}

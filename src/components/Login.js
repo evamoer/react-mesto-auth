@@ -3,14 +3,20 @@ import React, { useState } from "react";
 /**
  * Login - компонент со страницей логина пользователя.
  *
- * @prop onLogin - функция-обработчки данных, вводимых пользователем в форму, при логине.
+ * @prop onLogin - обработчик данных, вводимых пользователем в форму, при логине.
  */
 export default function Login({ onLogin }) {
+  /**
+   * Параметр состояния инпутов формы.
+   */
   const [loginInputValues, setLoginInputValues] = useState({
     email: "",
     password: "",
   });
 
+  /**
+   * Обработчик ввода данных в инпуты формы.
+   */
   const handleInputChange = (evt) => {
     const { name, value } = evt.target;
     setLoginInputValues({
@@ -19,6 +25,9 @@ export default function Login({ onLogin }) {
     });
   };
 
+  /**
+   * Обработчик сабмита формы.
+   */
   const handleFormSubmit = (evt) => {
     evt.preventDefault();
     const { password, email } = loginInputValues;

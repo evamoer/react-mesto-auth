@@ -7,16 +7,20 @@ import { useSelector } from "react-redux";
  * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
  * Включает в себя компонент PopupWithForm.
  *
- * @prop onClose - пропс с функцией закрытия попапа.
- * @prop onAddPlace - пропс с функцией обработки данных формы при сабмите.
- * @prop submitButtonText - пропс с текстом кнопки сабмита (меняется при выполнении запросы к api).
+ * @prop onClose - функция закрытия попапа.
+ * @prop onAddPlace - обработчик данных формы при сабмите.
+ * @prop submitButtonText - текст кнопки сабмита (меняется при выполнении запросы к api).
  */
-export default function AddPlacePopup({
-  onClose,
-  onAddPlace,
-  submitButtonText,
-}) {
+export default function AddPlacePopup({ onClose, onAddPlace }) {
+  /**
+   * Параметр состояния попапа: true - открыт, false - закрыт.
+   */
   const { addPlacePopupState } = useSelector((state) => state.popup);
+
+  /**
+   * Параметр загрузки данных на сервер.
+   */
+  const isLoading = useSelector((state) => state.loading.isLoading);
 
   /**
    * Параметры для валидации формы.
@@ -35,7 +39,7 @@ export default function AddPlacePopup({
   }, [addPlacePopupState]);
 
   /**
-   * Функция-обработчик сабмита формы.
+   * Обработчик сабмита формы.
    */
   const handleFormSubmit = (evt) => {
     evt.preventDefault();
@@ -46,7 +50,7 @@ export default function AddPlacePopup({
     <PopupWithForm
       title="Новое место"
       name="addCardForm"
-      submitButtonText={submitButtonText}
+      submitButtonText={!isLoading ? "Создать" : "Сохранение..."}
       isOpen={addPlacePopupState}
       onClose={onClose}
       onSubmit={handleFormSubmit}

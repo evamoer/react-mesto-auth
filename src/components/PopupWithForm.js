@@ -1,14 +1,14 @@
 /**
  * PopupWithForm - компонент попапа с формой.
  *
- * @prop title - пропс с названием формы, отображающейся в попапе.
- * @prop name - пропс с именем формы.
- * @prop submitButtonText - пропс с текстом кнопки сабмита (меняется при выполнении запросы к api).
- * @prop isOpen - пропс состояния попапа: открыт/закрыт.
- * @prop onClose - пропс с функцией закрытия попапа.
- * @prop onSubmit - пропс с функцией обработки сабмита формы.
- * @prop children - пропс с дочерними элементами формы (инпуты).
- * @prop isValid - пропс с состоянием валидности формы.
+ * @prop title - название формы, отображающейся в попапе.
+ * @prop name - имя формы.
+ * @prop submitButtonText - текст кнопки сабмита (меняется при выполнении запросы к api).
+ * @prop isOpen - состояние попапа: открыт/закрыт.
+ * @prop onClose - функция закрытия попапа.
+ * @prop onSubmit - обработчик сабмита формы.
+ * @prop children - дочерние элементами формы (инпуты).
+ * @prop isValid - состояние валидности формы.
  */
 export default function PopupWithForm({
   title,
@@ -20,7 +20,11 @@ export default function PopupWithForm({
   children,
   isValid,
 }) {
+  /**
+   * Параметр класса попапа.
+   */
   const popupClassName = `popup ${isOpen && "popup_opened"}`;
+
   return (
     <div className={popupClassName} onMouseDown={onClose}>
       <div className="popup__container">
