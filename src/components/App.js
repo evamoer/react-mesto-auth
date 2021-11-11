@@ -1,16 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import * as api from "../utils/api";
 import * as apiAuth from "../utils/apiAuth";
 import { useDispatch, useSelector } from "react-redux";
-import { openPopupAction, closePopupAction } from "../store/popupReducer";
+import {
+  openPopupAction,
+  closePopupAction,
+} from "../store/reducers/popupReducer";
 import {
   loginAction,
   logoutAction,
   registerAction,
   unregisterAction,
-} from "../store/authReducer";
+} from "../store/reducers/authReducer";
+import {
+  getUserAction,
+  updateProfileAction,
+  updateAvatarAction,
+} from "../store/reducers/userReducer";
+import {
+  getCardsAction,
+  addCardAction,
+  likeCardAction,
+  deleteCardAction,
+} from "../store/reducers/cardsReducer";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -30,17 +43,30 @@ import InfoTooltip from "./InfoTooltip";
  */
 
 const App = () => {
+  /**
+   * Хук для подключения dispatch.
+   */
   const dispatch = useDispatch();
+
+  /**
+   * Хук для определения history.
+   */
   const history = useHistory();
+
+  /**
+   * Параметр статуса логина пользователя
+   */
   const { isLoggedIn } = useSelector((state) => state.auth);
-  const [currentUser, setCurrentUser] = useState({
-    name: "",
-    about: "",
-    avatar: "",
-    cohort: "",
-    _id: "",
-  });
-  const [cards, setCards] = useState([]);
+
+  /**
+   * Параметр с текущим пользователем.
+   */
+  const currentUser = useSelector((state) => state.user);
+
+  /**
+   * Параметр карточек галереи.
+   */
+  const cards = useSelector((state) => state.cards);
   const [selectedCard, setSelectedCard] = useState(null);
   const [deletedCard, setDeletedCard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,8 +77,8 @@ const App = () => {
    * @param payload - тип попапа
    */
 
-  const openPopup = ({ payload }) => {
-    dispatch(openPopupAction(payload));
+  const openPopup = (popupType) => {
+    dispatch(openPopupAction({ payload: popupType }));
     document.addEventListener("keydown", handleEscClick);
   };
 
@@ -79,7 +105,7 @@ const App = () => {
   }, []);
 
   /**
-   * Функция-обработчик регистрации пользователя: отправляет запрос на api с параметрами password, email.
+   * Обработчик регистрации пользователя: отправляет запрос на api с параметрами password, email.
    *
    * @param password - пароль, вводимый пользователем
    * @param email - email, вводимый пользователя
@@ -89,11 +115,11 @@ const App = () => {
       .register(password, email)
       .then(() => {
         dispatch(registerAction());
-        openPopup({ payload: "infoTooltip" });
+        openPopup("infoTooltip");
       })
       .catch((error) => {
         dispatch(unregisterAction());
-        openPopup({ payload: "infoTooltip" });
+        openPopup("infoTooltip");
         handleError(error);
       });
   };
@@ -125,14 +151,14 @@ const App = () => {
   };
 
   /**
-   * Функция-обработчик ошибок, возникающих при запросах.
+   * Обработчик ошибок, возникающих при запросах.
    */
   const handleError = (error) => {
     console.log(error);
   };
 
   /**
-   * Функция-обработчик логина пользователя: отправляет запрос на api с параметрами password, email.
+   * Обработчик логина пользователя: отправляет запрос на api с параметрами password, email.
    *
    * @param password - пароль, вводимый пользователем
    * @param email - email, вводимый пользователя
@@ -151,7 +177,7 @@ const App = () => {
   };
 
   /**
-   * Функция-обработчик разлогинивания пользователя из аккаунта: удаление token из LocalStorage.
+   * Обработчик разлогинивания пользователя из аккаунта: удаление token из LocalStorage.
    */
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -165,12 +191,12 @@ const App = () => {
   useEffect(() => {
     api
       .getCards()
-      .then((cardsData) => setCards(cardsData))
+      .then((cardsData) => dispatch(getCardsAction(cardsData)))
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
   /**
-   * Функция-обработчик нажатия на кнопку лайка карточки.
+   * Обработчик нажатия на кнопку лайка карточки.
    *
    * @param likes - массив с пользователями, лайкнувшими карточку.
    * @param cardId - id карточки, выбранной для установки лайка.
@@ -180,7 +206,7 @@ const App = () => {
     api
       .changeLikeCardStatus(cardId, isLiked)
       .then((newCard) => {
-        setCards((state) => state.map((c) => (c._id === cardId ? newCard : c)));
+        dispatch(likeCardAction({ cardId: cardId, newCard: newCard }));
       })
       .catch((err) => console.log(`Ошибка: ${err}`));
   };
@@ -193,21 +219,19 @@ const App = () => {
     if (deletedCard !== null) {
       api
         .deleteCard(deletedCard._id)
-        .then(
-          setCards((state) => state.filter((c) => c._id !== deletedCard._id))
-        )
+        .then(dispatch(deleteCardAction(deletedCard._id)))
         .then(() => closePopup())
         .catch((err) => console.log(`Ошибка: ${err}`));
     }
   };
 
   /**
-   * Функция-обработчик нажатия клика по кнопке удаления карточки.
+   * Обработчик нажатия клика по кнопке удаления карточки.
    *
    * @param cardId - id карточки, выбранной для удаления.
    */
   const handleCardDeleteButtonClick = (cardId) => {
-    openPopup({ payload: "deletePlacePopup" });
+    openPopup("deletePlacePopup");
     setDeletedCard({
       ...deletedCard,
       _id: cardId,
@@ -215,7 +239,7 @@ const App = () => {
   };
 
   /**
-   * Функция-обработчик нажатия на сабмит формы добавления новой карточки.
+   * Обработчик нажатия на сабмит формы добавления новой карточки.
    *
    * @param inputValuesData - данные новой карточки для добавления в галерею, введенные в форму пользователем..
    */
@@ -223,9 +247,7 @@ const App = () => {
     setIsLoading(true);
     api
       .addCard(inputValuesData)
-      .then((newCard) => {
-        setCards([newCard, ...cards]);
-      })
+      .then((newCard) => dispatch(addCardAction(newCard)))
       .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
@@ -237,12 +259,12 @@ const App = () => {
   useEffect(() => {
     api
       .getUserData()
-      .then((user) => setCurrentUser(user))
+      .then((user) => dispatch(getUserAction(user)))
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
 
   /**
-   * Функция-обработчик нажатия на кнопку удаления карточки.
+   * Обработчик нажатия на кнопку удаления карточки.
    *
    * @param inputValuesData - новые данные профиля, введенные в форму пользователем.
    */
@@ -250,16 +272,14 @@ const App = () => {
     setIsLoading(true);
     api
       .updateUserData(inputValuesData)
-      .then((data) =>
-        setCurrentUser({ ...currentUser, name: data.name, about: data.about })
-      )
+      .then((data) => dispatch(updateProfileAction(data)))
       .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
   };
 
   /**
-   * Функция-обработчик нажатия на кнопку удаления карточки.
+   * Обработчик нажатия на кнопку удаления карточки.
    *
    * @param inputValuesData - новые данные аватара (ссылка на изображение), введенные в форму пользователем.
    */
@@ -267,14 +287,14 @@ const App = () => {
     setIsLoading(true);
     api
       .updateAvatar(inputValuesData)
-      .then((data) => setCurrentUser({ ...currentUser, avatar: data.avatar }))
+      .then((data) => dispatch(updateAvatarAction(data)))
       .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => setIsLoading(false));
   };
 
   /**
-   * Функция-обработчик нажатия на изображение карточки.
+   * Обработчик нажатия на изображение карточки.
    * По клику открывается попап с полным изображением.
    *
    * @param card - объект с данными карточки (название name, ссылка link)
@@ -285,11 +305,11 @@ const App = () => {
       name: card.name,
       link: card.link,
     });
-    openPopup({ payload: "imagePopup" });
+    openPopup("imagePopup");
   };
 
   return (
-    <CurrentUserContext.Provider value={currentUser}>
+    <>
       <Header onLogout={handleLogout} />
       <Switch>
         <Route exact path="/sign-in">
@@ -330,7 +350,7 @@ const App = () => {
       />
       <ImagePopup card={selectedCard} onClose={closePopup} />
       <InfoTooltip onClose={closePopup} />
-    </CurrentUserContext.Provider>
+    </>
   );
 };
 

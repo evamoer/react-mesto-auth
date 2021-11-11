@@ -3,11 +3,15 @@ import { useSelector } from "react-redux";
 /**
  * ImagePopup - компонент попапа с полным изображением карточки.
  *
- * @prop onClose - пропс с функцией закрытия попапа.
- * @prop card - пропс с объектом данными карточки.
+ * @prop onClose - функция закрытия попапа.
+ * @prop card - объект с данными карточки.
  */
 export default function ImagePopup({ card, onClose }) {
+  /**
+   * Параметр состояния попапа: true - открыт, false - закрыт.
+   */
   const { imagePopupState } = useSelector((state) => state.popup);
+
   return (
     <div
       className={`popup popup_type_full-image ${

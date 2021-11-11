@@ -6,11 +6,22 @@ import { useSelector } from "react-redux";
 /**
  * Header - компонент хэдера.
  *
- * @prop onLogout - пропс с функцией обработки клика на кнопку Выйти.
+ * @prop onLogout - обработчик клика на кнопку Выйти.
  */
 export default function Header({ onLogout }) {
+  /**
+   * Хук для определения текущего URL.
+   */
   const location = useLocation();
+
+  /**
+   * Параметр с текущим URL.
+   */
   const currentLocation = location.pathname;
+
+  /**
+   * Параметры статуса логина пользователя и его email.
+   */
   const { isLoggedIn, userEmail } = useSelector((state) => state.auth);
 
   return (

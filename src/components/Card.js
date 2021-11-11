@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import React from "react";
+import { useSelector } from "react-redux";
 
 /**
  * Card - компонент карточки в галерее.
@@ -23,7 +23,7 @@ export default function Card({
   onCardLike,
   onCardDelete,
 }) {
-  const currentUser = useContext(CurrentUserContext);
+  const currentUser = useSelector((state) => state.user);
   const isOwn = owner._id === currentUser._id;
   const isLiked = likes.some((user) => user._id === currentUser._id);
 
