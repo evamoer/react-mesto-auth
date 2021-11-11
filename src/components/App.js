@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 import * as api from "../utils/api";
 import * as apiAuth from "../utils/apiAuth";
@@ -23,7 +23,15 @@ import {
   addCardAction,
   likeCardAction,
   deleteCardAction,
-} from "../store/reducers/cardsReducer";
+} from "../store/reducers/galleryReducer";
+import {
+  openedCardAction,
+  deletedCardAction,
+} from "../store/reducers/cardReducer";
+import {
+  loadingDataAction,
+  loadedDataAction,
+} from "../store/reducers/loadingReducer";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -64,20 +72,17 @@ const App = () => {
   const currentUser = useSelector((state) => state.user);
 
   /**
-   * Параметр карточек галереи.
+   * Параметр карточки: opened - для полного изображения карточки, deleted - для удаляемой карточки.
    */
-  const cards = useSelector((state) => state.cards);
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [deletedCard, setDeletedCard] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const card = useSelector((state) => state.card);
 
   /**
    * Функция открытия попапа. Дополнительно устанавливается слушатель на клик по клавише Esc.
    *
-   * @param payload - тип попапа
+   * @param popupType - тип попапа
    */
 
-  const openPopup = (popupType) => {
+  const onOpenPopup = (popupType) => {
     dispatch(openPopupAction({ payload: popupType }));
     document.addEventListener("keydown", handleEscClick);
   };
@@ -85,13 +90,12 @@ const App = () => {
   /**
    * Функция закрытия попапа. Дополнительно удаляется слушатель на клик по клавише Esc.
    */
-  const closePopup = (evt) => {
+  const onClosePopup = (evt) => {
     //если клик не по оверлэю, то не закрываем попап
     if (evt && evt.target !== evt.currentTarget) {
       return;
     }
     dispatch(closePopupAction());
-    setDeletedCard(null);
     document.removeEventListener("keydown", handleEscClick);
   };
 
@@ -100,7 +104,7 @@ const App = () => {
    */
   const handleEscClick = useCallback((evt) => {
     if (evt.key === "Escape") {
-      closePopup();
+      onClosePopup();
     }
   }, []);
 
@@ -115,11 +119,11 @@ const App = () => {
       .register(password, email)
       .then(() => {
         dispatch(registerAction());
-        openPopup("infoTooltip");
+        onOpenPopup("infoTooltip");
       })
       .catch((error) => {
         dispatch(unregisterAction());
-        openPopup("infoTooltip");
+        onOpenPopup("infoTooltip");
         handleError(error);
       });
   };
@@ -214,13 +218,13 @@ const App = () => {
   /**
    * Функция подтверждения удаления карточки.
    */
-  const approveDeletePlace = () => {
-    closePopup();
-    if (deletedCard !== null) {
+  const onApproveDeletePlace = () => {
+    onClosePopup();
+    if (card._id) {
       api
-        .deleteCard(deletedCard._id)
-        .then(dispatch(deleteCardAction(deletedCard._id)))
-        .then(() => closePopup())
+        .deleteCard(card._id)
+        .then(dispatch(deleteCardAction(card._id)))
+        .then(() => onClosePopup())
         .catch((err) => console.log(`Ошибка: ${err}`));
     }
   };
@@ -231,11 +235,8 @@ const App = () => {
    * @param cardId - id карточки, выбранной для удаления.
    */
   const handleCardDeleteButtonClick = (cardId) => {
-    openPopup("deletePlacePopup");
-    setDeletedCard({
-      ...deletedCard,
-      _id: cardId,
-    });
+    onOpenPopup("deletePlacePopup");
+    dispatch(deletedCardAction(cardId));
   };
 
   /**
@@ -244,13 +245,13 @@ const App = () => {
    * @param inputValuesData - данные новой карточки для добавления в галерею, введенные в форму пользователем..
    */
   const handleAddPlaceSubmit = (inputValuesData) => {
-    setIsLoading(true);
+    dispatch(loadingDataAction());
     api
       .addCard(inputValuesData)
       .then((newCard) => dispatch(addCardAction(newCard)))
-      .then(() => closePopup())
+      .then(() => onClosePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
-      .finally(() => setIsLoading(false));
+      .finally(() => dispatch(loadedDataAction()));
   };
 
   /**
@@ -269,13 +270,13 @@ const App = () => {
    * @param inputValuesData - новые данные профиля, введенные в форму пользователем.
    */
   const handleUpdateUser = (inputValuesData) => {
-    setIsLoading(true);
+    dispatch(loadingDataAction());
     api
       .updateUserData(inputValuesData)
       .then((data) => dispatch(updateProfileAction(data)))
-      .then(() => closePopup())
+      .then(() => onClosePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
-      .finally(() => setIsLoading(false));
+      .finally(() => dispatch(loadedDataAction()));
   };
 
   /**
@@ -284,13 +285,13 @@ const App = () => {
    * @param inputValuesData - новые данные аватара (ссылка на изображение), введенные в форму пользователем.
    */
   const handleUpdateAvatar = (inputValuesData) => {
-    setIsLoading(true);
+    dispatch(loadingDataAction());
     api
       .updateAvatar(inputValuesData)
       .then((data) => dispatch(updateAvatarAction(data)))
-      .then(() => closePopup())
+      .then(() => onClosePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
-      .finally(() => setIsLoading(false));
+      .finally(() => dispatch(loadedDataAction()));
   };
 
   /**
@@ -300,12 +301,8 @@ const App = () => {
    * @param card - объект с данными карточки (название name, ссылка link)
    */
   const handleCardClick = (card) => {
-    setSelectedCard({
-      ...selectedCard,
-      name: card.name,
-      link: card.link,
-    });
-    openPopup("imagePopup");
+    dispatch(openedCardAction(card));
+    onOpenPopup("imagePopup");
   };
 
   return (
@@ -321,35 +318,28 @@ const App = () => {
         <ProtectedRoute
           path="/"
           component={Main}
-          onOpenPopup={openPopup}
+          onOpenPopup={onOpenPopup}
           onImageCard={handleCardClick}
-          cards={cards}
           onCardLike={handleCardLike}
           onCardDelete={handleCardDeleteButtonClick}
         />
         {isLoggedIn && <Footer />}
       </Switch>
       <EditProfilePopup
-        onClose={closePopup}
+        onClose={onClosePopup}
         onUpdateUser={handleUpdateUser}
-        submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
       <EditAvatarPopup
-        onClose={closePopup}
+        onClose={onClosePopup}
         onUpdateAvatar={handleUpdateAvatar}
-        submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       />
-      <AddPlacePopup
-        onClose={closePopup}
-        onAddPlace={handleAddPlaceSubmit}
-        submitButtonText={!isLoading ? "Создать" : "Сохранение..."}
-      />
+      <AddPlacePopup onClose={onClosePopup} onAddPlace={handleAddPlaceSubmit} />
       <DeletePlacePopup
-        onClose={closePopup}
-        onApproveDeletePlace={approveDeletePlace}
+        onClose={onClosePopup}
+        onApproveDeletePlace={onApproveDeletePlace}
       />
-      <ImagePopup card={selectedCard} onClose={closePopup} />
-      <InfoTooltip onClose={closePopup} />
+      <ImagePopup onClose={onClosePopup} />
+      <InfoTooltip onClose={onClosePopup} />
     </>
   );
 };

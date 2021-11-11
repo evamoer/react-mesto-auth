@@ -9,13 +9,8 @@ import { useSelector } from "react-redux";
  *
  * @prop onClose - функция закрытия попапа.
  * @prop onUpdateUser - обработчик данных формы при сабмите.
- * @prop submitButtonText - текст кнопки сабмита (он меняется при выполнении запроса к api).
  */
-export default function EditProfilePopup({
-  onClose,
-  onUpdateUser,
-  submitButtonText,
-}) {
+export default function EditProfilePopup({ onClose, onUpdateUser }) {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
@@ -32,6 +27,10 @@ export default function EditProfilePopup({
    */
   const { name, about } = useSelector((state) => state.user);
 
+  /**
+   * Параметр загрузки данных на сервер.
+   */
+  const isLoading = useSelector((state) => state.loading.isLoading);
   /**
    * Хук установки начального состояния формы при открытии попапа.
    */
@@ -56,7 +55,7 @@ export default function EditProfilePopup({
     <PopupWithForm
       title="Редактировать профиль"
       name="editProfileForm"
-      submitButtonText={submitButtonText}
+      submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       isOpen={editProfilePopupState}
       onClose={onClose}
       onSubmit={handleFormSubmit}

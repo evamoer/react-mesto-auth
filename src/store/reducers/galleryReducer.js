@@ -1,13 +1,23 @@
-const cardsState = [];
+/**
+ * Дефолтное состояние для galleryReducer.
+ */
+const galleryState = [];
 const GET_CARDS = "GET_CARDS";
 const ADD_CARD = "ADD_CARD";
 const LIKE_CARD = "LIKE_CARD";
 const DELETE_CARD = "DELETE_CARD";
 
-export const cardsReducer = (state = cardsState, action) => {
+/**
+ * Редьюсер для взаимодействия с галереей: загрузка всех карточек, добавление новой карточки,
+ * лайк карточки, удаление карточки.
+ *
+ * @param state - дефолтное состояние параметров galleryState.
+ * @param action - action, отправленный в galleryReducer.
+ */
+export const galleryReducer = (state = galleryState, action) => {
   switch (action.type) {
     case GET_CARDS:
-      return [...cardsState, ...action.payload];
+      return [...galleryState, ...action.payload];
     case ADD_CARD:
       return [action.payload, ...state];
     case LIKE_CARD:
@@ -24,6 +34,9 @@ export const cardsReducer = (state = cardsState, action) => {
   }
 };
 
+/**
+ * Экспорт actions данного редьюсера для dispatch в App.js
+ */
 export const getCardsAction = (payload) => ({
   type: GET_CARDS,
   payload: payload,

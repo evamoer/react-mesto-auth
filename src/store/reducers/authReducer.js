@@ -12,7 +12,7 @@ const REGISTERED = "registered";
 const UNREGISTERED = "unregistered";
 
 /**
- * Функция-редьюсер для авторизации пользователя
+ * Редьюсер для авторизации пользователя
  *
  * @param state - дефолтное состояние параметров isRegistered, isLoggedIn, userEmail.
  * @param action - action, отправленный в authReducer.

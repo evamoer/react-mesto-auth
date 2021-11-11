@@ -9,13 +9,8 @@ import { useSelector } from "react-redux";
  *
  * @prop onClose - функция закрытия попапа.
  * @prop onUpdateAvatar - обработчик данных формы при сабмите.
- * @prop submitButtonText - текст кнопки сабмита (меняется при выполнении запросы к api).
  */
-export default function EditAvatarPopup({
-  onClose,
-  onUpdateAvatar,
-  submitButtonText,
-}) {
+export default function EditAvatarPopup({ onClose, onUpdateAvatar }) {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
@@ -26,6 +21,11 @@ export default function EditAvatarPopup({
    */
   const { values, handleChange, errors, isValid, setValues, resetForm } =
     useFormAndValidation();
+
+  /**
+   * Параметр загрузки данных на сервер.
+   */
+  const isLoading = useSelector((state) => state.loading.isLoading);
 
   /**
    * Хук установки начального состояния формы при открытии попапа.
@@ -49,7 +49,7 @@ export default function EditAvatarPopup({
     <PopupWithForm
       title="Обновить аватар"
       name="editAvatarForm"
-      submitButtonText={submitButtonText}
+      submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       isOpen={editAvatarPopupState}
       onClose={onClose}
       onSubmit={handleFormSubmit}
