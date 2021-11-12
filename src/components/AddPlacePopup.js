@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import PopupWithForm from "./PopupWithForm";
-import useFormAndValidation from "../hooks/validationHook";
 import { useSelector } from "react-redux";
+import useFormAndValidation from "../hooks/validationHook";
+import PopupWithForm from "./PopupWithForm";
 
 /**
  * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
  *
  * @prop onClose - функция закрытия попапа.
  * @prop onAddPlace - обработчик данных формы при сабмите.
- * @prop submitButtonText - текст кнопки сабмита (меняется при выполнении запросы к api).
  */
 export default function AddPlacePopup({ onClose, onAddPlace }) {
   /**

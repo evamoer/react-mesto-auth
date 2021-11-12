@@ -1,8 +1,20 @@
 import React, { useEffect, useCallback } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import * as api from "../utils/api";
 import * as apiAuth from "../utils/apiAuth";
-import { useDispatch, useSelector } from "react-redux";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+import ImagePopup from "./ImagePopup";
+import AddPlacePopup from "./AddPlacePopup";
+import DeletePlacePopup from "./DeletePlacePopup";
+import Register from "./Register";
+import Login from "./Login";
+import ProtectedRoute from "./ProtectedRoute";
+import InfoTooltip from "./InfoTooltip";
 import {
   openPopupAction,
   closePopupAction,
@@ -32,24 +44,11 @@ import {
   loadingDataAction,
   loadedDataAction,
 } from "../store/reducers/loadingReducer";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
-import EditProfilePopup from "./EditProfilePopup";
-import EditAvatarPopup from "./EditAvatarPopup";
-import ImagePopup from "./ImagePopup";
-import AddPlacePopup from "./AddPlacePopup";
-import DeletePlacePopup from "./DeletePlacePopup";
-import Register from "./Register";
-import Login from "./Login";
-import ProtectedRoute from "./ProtectedRoute";
-import InfoTooltip from "./InfoTooltip";
 
 /**
  * App - главный компонент приложения.
  * Включает в себя все компоненты и логику работу приложения.
  */
-
 const App = () => {
   /**
    * Хук для подключения dispatch.
@@ -57,7 +56,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   /**
-   * Хук для определения history.
+   * Хук для подключения history.
    */
   const history = useHistory();
 
@@ -67,7 +66,7 @@ const App = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
 
   /**
-   * Параметр с текущим пользователем.
+   * Параметр с данными текущего пользователя.
    */
   const currentUser = useSelector((state) => state.user);
 
@@ -77,7 +76,7 @@ const App = () => {
   const card = useSelector((state) => state.card);
 
   /**
-   * Функция открытия попапа. Дополнительно устанавливается слушатель на клик по клавише Esc.
+   * Функция открытия попапа. Дополнительно устанавливается слушатель нажатия на Esc.
    *
    * @param popupType - тип попапа
    */
@@ -88,7 +87,7 @@ const App = () => {
   };
 
   /**
-   * Функция закрытия попапа. Дополнительно удаляется слушатель на клик по клавише Esc.
+   * Функция закрытия попапа. Дополнительно удаляется слушатель нажатия на Esc.
    */
   const onClosePopup = (evt) => {
     //если клик не по оверлэю, то не закрываем попап
@@ -100,7 +99,7 @@ const App = () => {
   };
 
   /**
-   * Обработчик нажатия на клавишу Escape.
+   * Обработчик нажатия на Esc.
    */
   const handleEscClick = useCallback((evt) => {
     if (evt.key === "Escape") {
@@ -109,7 +108,8 @@ const App = () => {
   }, []);
 
   /**
-   * Обработчик регистрации пользователя: отправляет запрос на api с параметрами password, email.
+   * Обработчик регистрации пользователя:
+   * отправляет запрос к api с параметрами password, email.
    *
    * @param password - пароль, вводимый пользователем
    * @param email - email, вводимый пользователя
@@ -136,8 +136,9 @@ const App = () => {
   }, []);
 
   /**
-   * Проверка токена в localStorage. При его наличии, устанавливаем, что пользователь залогинен,
-   * и перенаправляем на "/".
+   * Проверка наличия токена в localStorage.
+   * При его наличии, устанавливаем, что пользователь залогинен, и перенаправляем на "/".
+   *
    */
   const checkUserToken = () => {
     const token = localStorage.getItem("token");
@@ -162,7 +163,8 @@ const App = () => {
   };
 
   /**
-   * Обработчик логина пользователя: отправляет запрос на api с параметрами password, email.
+   * Обработчик статуса логина пользователя:
+   * отправляет запрос к api с параметрами password, email.
    *
    * @param password - пароль, вводимый пользователем
    * @param email - email, вводимый пользователя
@@ -181,7 +183,8 @@ const App = () => {
   };
 
   /**
-   * Обработчик разлогинивания пользователя из аккаунта: удаление token из LocalStorage.
+   * Обработчик разлогинивания пользователя из аккаунта:
+   * удаляем токен из LocalStorage.
    */
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -190,7 +193,7 @@ const App = () => {
   };
 
   /**
-   * Хук с запросом на api всех карточек с сервера, обновления стета с карточками.
+   * Хук с запросом к api всех карточек с сервера, обновления стейта с карточками.
    */
   useEffect(() => {
     api
@@ -200,7 +203,7 @@ const App = () => {
   }, []);
 
   /**
-   * Обработчик нажатия на кнопку лайка карточки.
+   * Обработчик клика на кнопку лайка карточки.
    *
    * @param likes - массив с пользователями, лайкнувшими карточку.
    * @param cardId - id карточки, выбранной для установки лайка.
@@ -230,7 +233,7 @@ const App = () => {
   };
 
   /**
-   * Обработчик нажатия клика по кнопке удаления карточки.
+   * Обработчик клика по кнопке удаления карточки.
    *
    * @param cardId - id карточки, выбранной для удаления.
    */
@@ -240,7 +243,7 @@ const App = () => {
   };
 
   /**
-   * Обработчик нажатия на сабмит формы добавления новой карточки.
+   * Обработчик клика на сабмит формы добавления новой карточки.
    *
    * @param inputValuesData - данные новой карточки для добавления в галерею, введенные в форму пользователем..
    */
@@ -255,7 +258,7 @@ const App = () => {
   };
 
   /**
-   * Хук с запросом на api данных текущего пользователя.
+   * Хук с запросом к api данных текущего пользователя.
    */
   useEffect(() => {
     api
@@ -265,7 +268,7 @@ const App = () => {
   }, []);
 
   /**
-   * Обработчик нажатия на кнопку удаления карточки.
+   * Обработчик клика на кнопку удаления карточки.
    *
    * @param inputValuesData - новые данные профиля, введенные в форму пользователем.
    */
@@ -280,7 +283,7 @@ const App = () => {
   };
 
   /**
-   * Обработчик нажатия на кнопку удаления карточки.
+   * Обработчик клика на кнопку удаления карточки.
    *
    * @param inputValuesData - новые данные аватара (ссылка на изображение), введенные в форму пользователем.
    */
@@ -295,7 +298,7 @@ const App = () => {
   };
 
   /**
-   * Обработчик нажатия на изображение карточки.
+   * Обработчик клика на изображение карточки.
    * По клику открывается попап с полным изображением.
    *
    * @param card - объект с данными карточки (название name, ссылка link)

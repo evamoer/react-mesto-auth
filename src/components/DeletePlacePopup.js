@@ -1,6 +1,6 @@
 import React from "react";
-import PopupWithForm from "./PopupWithForm";
 import { useSelector } from "react-redux";
+import PopupWithForm from "./PopupWithForm";
 
 /**
  * DeletePlacePopup - компонент попапа с формой удаления карточки в галерею.

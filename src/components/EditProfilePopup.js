@@ -1,7 +1,7 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import useFormAndValidation from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
-import { useSelector } from "react-redux";
 
 /**
  * EditProfilePopup - компонент попапа с формой добавления карточки в галерею.

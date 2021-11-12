@@ -4,14 +4,14 @@ import { useSelector } from "react-redux";
 /**
  * Card - компонент карточки в галерее.
  *
- * @prop name - пропс с названием карточки.
- * @prop link - пропс с ссылкой на изображение карточки.
- * @prop likes - пропс с массивом пользователей, лайкнувших карточку.
- * @prop owner - пропс с массивом данных пользователя, загрузившего карточку.
- * @prop _id - пропс с id карточки.
- * @prop onCardClick - пропс с функцией обработки клика на изображение карточки.
- * @prop onCardLike - пропс с функцией обработки клика на кнопку лайка карточки.
- * @prop onCardDelete - пропс с функцией обработчки клика на кнопку удаления карточки.
+ * @prop name - название карточки.
+ * @prop link - ссылка на изображение карточки.
+ * @prop likes - массив пользователей, лайкнувших карточку.
+ * @prop owner - массив данных пользователя, загрузившего карточку.
+ * @prop _id - id карточки.
+ * @prop onCardClick - обработчик клика на изображение карточки.
+ * @prop onCardLike - обработчик клика на кнопку лайка карточки.
+ * @prop onCardDelete - обработчик клика на кнопку удаления карточки.
  */
 export default function Card({
   name,
@@ -23,18 +23,40 @@ export default function Card({
   onCardLike,
   onCardDelete,
 }) {
+  /**
+   * Параметры текущего пользователя.
+   */
   const currentUser = useSelector((state) => state.user);
+
+  /**
+   * Параметр, определяющий, является ли пользователь создателем карточки.
+   * Необходим для отрисовки нопки удаления карточки.
+   */
   const isOwn = owner._id === currentUser._id;
+
+  /**
+   * Параметр, определяющий, лайкнул ли пользователь карточку.
+   * Необходим для отображения активного лайка карточки.
+   */
   const isLiked = likes.some((user) => user._id === currentUser._id);
 
-  const handleClick = () => {
+  /**
+   * Обработчик клика на изображение карточки.
+   */
+  const handleCardClick = () => {
     onCardClick({ name: name, link: link });
   };
 
+  /**
+   * Обработчик клика на кнопку лайка карточки.
+   */
   const handleLikeClick = () => {
     onCardLike(likes, _id);
   };
 
+  /**
+   * Обработчик клика на кнопку удаления карточки.
+   */
   const handleDeleteClick = () => {
     onCardDelete(_id);
   };
@@ -48,7 +70,7 @@ export default function Card({
         ></button>
       )}
       <article className="card">
-        <div className="card__image-container" onClick={handleClick}>
+        <div className="card__image-container" onClick={handleCardClick}>
           <img src={link} alt={name} className="card__image" />
         </div>
         <div className="card__info">

@@ -1,12 +1,11 @@
 import React from "react";
-import Card from "./Card";
 import { useSelector } from "react-redux";
+import Card from "./Card";
 
 /**
  * Gallery - компонент галереи.
  *
  * @prop onImageCard - обработчик клика на изображение карточки.
- * @prop cards - массив всех карточек (после запроса к api).
  * @prop onCardLike - обработчик клика на кнопку лайка карточки.
  * @prop onCardDelete - обработчик клика на кнопку удаления карточки.
  */

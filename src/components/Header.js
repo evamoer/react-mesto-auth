@@ -1,7 +1,7 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import logoPath from "../images/logo.svg";
-import { useSelector } from "react-redux";
 
 /**
  * Header - компонент хэдера.

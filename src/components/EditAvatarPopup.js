@@ -1,7 +1,7 @@
 import React from "react";
-import PopupWithForm from "./PopupWithForm";
-import useFormAndValidation from "../hooks/validationHook";
 import { useSelector } from "react-redux";
+import useFormAndValidation from "../hooks/validationHook";
+import PopupWithForm from "./PopupWithForm";
 
 /**
  * EditAvatarPopup - компонент попапа с формой изменения аватара пользователя.
