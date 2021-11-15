@@ -19,6 +19,12 @@ const rootReducer = combineReducers({
 });
 
 /**
+ * Type корневого редьюсера.
+ */
+
+export type RootState = ReturnType<typeof rootReducer>;
+
+/**
  * Store данного приложения.
  */
 export const store = createStore(rootReducer);

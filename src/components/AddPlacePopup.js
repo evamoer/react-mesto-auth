@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { SyntheticEvent, useEffect } from "react";
 import { useSelector } from "react-redux";
 import useFormAndValidation from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
+import { RootState } from "../store/store"
 
 /**
  * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
@@ -10,7 +11,7 @@ import PopupWithForm from "./PopupWithForm";
  * @prop onClose - функция закрытия попапа.
  * @prop onAddPlace - обработчик данных формы при сабмите.
  */
-export default function AddPlacePopup({ onClose, onAddPlace }) {
+const AddPlacePopup = ({ onClose, onAddPlace}) => {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
@@ -96,3 +97,5 @@ export default function AddPlacePopup({ onClose, onAddPlace }) {
     </PopupWithForm>
   );
 }
+
+export default AddPlacePopup;

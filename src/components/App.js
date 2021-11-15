@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, SyntheticEvent } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../utils/api";
@@ -15,6 +15,7 @@ import Register from "./Register";
 import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
+import { RootState } from "../store/store"
 import {
   openPopupAction,
   closePopupAction,
@@ -82,7 +83,7 @@ const App = () => {
    */
 
   const onOpenPopup = (popupType) => {
-    dispatch(openPopupAction({ payload: popupType }));
+    dispatch(openPopupAction(popupType));
     document.addEventListener("keydown", handleEscClick);
   };
 

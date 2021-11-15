@@ -1,11 +1,17 @@
 /**
  * Дефолтное состояние для loadingReducer.
  */
-const loadingState = {
+const loadingState: { isLoading: boolean } = {
   isLoading: false,
 };
-const LOADING = "LOADING";
-const LOADED = "LOADED";
+
+/**
+ * Перечисление actions для loadingReducer.
+ */
+enum loadingActions {
+  LOADING = "LOADING",
+  LOADED = "LOADED"
+}
 
 /**
  * Редьюсер для статуса загрузки данных на сервер.
@@ -13,11 +19,14 @@ const LOADED = "LOADED";
  * @param state - дефолтное состояние параметров loadingState.
  * @param action - action, отправленный в loadingReducer.
  */
-export const loadingReducer = (state = loadingState, action) => {
+export const loadingReducer = (
+  state: { isLoading: boolean } = loadingState,
+  action: { type: string, payload: { isLoading: boolean } },
+) => {
   switch (action.type) {
-    case LOADING:
+    case loadingActions.LOADING:
       return { ...state, isLoading: true };
-    case LOADED:
+    case loadingActions.LOADED:
       return { ...state, isLoading: false };
     default:
       return state;
@@ -27,5 +36,5 @@ export const loadingReducer = (state = loadingState, action) => {
 /**
  * Экспорт actions данного редьюсера для dispatch в App.js
  */
-export const loadingDataAction = () => ({ type: LOADING });
-export const loadedDataAction = () => ({ type: LOADED });
+export const loadingDataAction = () => ({ type: loadingActions.LOADING });
+export const loadedDataAction = () => ({ type: loadingActions.LOADED });
