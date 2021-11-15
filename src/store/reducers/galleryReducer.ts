@@ -1,12 +1,18 @@
 import { ICard } from './cardReducer';
+import { IActionObject } from './authReducer';
 
 /**
  * Дефолтное состояние для galleryReducer.
+ * @prop  ICard - тип карточки (объект с данными). Галерея состоит из массива с карточками.
  */
 const galleryState: ICard[] = [];
 
 /**
  * Перечисление actions для galleryReducer.
+ * GET_CARDS - action для получения всех карточек с сервера.
+ * ADD_CARD - action для добавления карточки в галерею.
+ * LIKE_CARD - action для установки лайка на карточку.
+ * DELETE_CARD - action для удаления карточки из галереи.
  */
 enum galleryActions {
   GET_CARDS = "GET_CARDS",
@@ -22,7 +28,10 @@ enum galleryActions {
  * @param state - дефолтное состояние параметров galleryState.
  * @param action - action, отправленный в galleryReducer.
  */
-export const galleryReducer = (state: Array<any> = galleryState, action: { type: string, payload: any }) => {
+export const galleryReducer = (
+  state: ICard[] = galleryState,
+  action: { type: string, payload: any }
+) => {
   switch (action.type) {
     case galleryActions.GET_CARDS:
       return [...galleryState, ...action.payload];
@@ -42,24 +51,24 @@ export const galleryReducer = (state: Array<any> = galleryState, action: { type:
 };
 
 /**
- * Экспорт actions данного редьюсера для dispatch в App.js
+ * Экспорт actions данного редьюсера для dispatch в App.js.
  */
-export const getCardsAction = (payload: Array<any>) => ({
+export const getCardsAction = (payload: ICard[]): IActionObject => ({
   type: galleryActions.GET_CARDS,
   payload: payload,
 });
 
-export const addCardAction = (payload: any) => ({
+export const addCardAction = (payload: ICard): IActionObject => ({
   type: galleryActions.ADD_CARD,
   payload: payload,
 });
 
-export const likeCardAction = (payload: any) => ({
+export const likeCardAction = (payload: ICard | string): IActionObject => ({
   type: galleryActions.LIKE_CARD,
   payload: payload,
 });
 
-export const deleteCardAction = (payload: any) => ({
+export const deleteCardAction = (payload: string): IActionObject => ({
   type: galleryActions.DELETE_CARD,
   payload: payload,
 });

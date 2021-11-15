@@ -1,7 +1,14 @@
 import { IUser, userState } from './userReducer';
+import { IActionObject } from './authReducer';
 
 /**
- * Интерфейс для дефолтного состояния cardReducer..
+ * Интерфейс для дефолтного состояния cardReducer.
+ * @prop _id - id карточки.
+ * @prop name - название карточки.
+ * @prop link - ссылка на изображение карточки.
+ * @prop createdAt - время создания карточки.
+ * @prop likes - массив пользователей, лайкнувших карточку.
+ * @prop owner - объект с данными пользователя, создавшего карточку.
  */
 export interface ICard {
   _id: string,
@@ -26,6 +33,8 @@ const cardState: ICard = {
 
 /**
  * Перечисление actions для cardReducer.
+ * OPENED_CARD - action для данных карточки, полное изображение которой открывается в попапе.
+ * DELETED_CARD - action для данных карточки, удаление которой произойдет при одобрении в попапе.
  */
 enum cardActions {
   OPENED_CARD = "OPENED_CARD",
@@ -34,12 +43,11 @@ enum cardActions {
 
 /**
  * Редьюсер для получения данных карточки для открытие полного изображения или удаление карточки.
- *
  * @param state - дефолтное состояние параметров cardState.
  * @param action - action, отправленный в cardReducer.
  */
 export const cardReducer = (
-  state: { _id: string, name: string, link: string } = cardState,
+  state: ICard = cardState,
   action: {
     type: string, payload: { _id: string, name: string, link: string }
   }
@@ -55,13 +63,13 @@ export const cardReducer = (
 };
 
 /**
- * Экспорт actions данного редьюсера для dispatch в App.js
+ * Экспорт actions данного редьюсера для dispatch в App.js.
  */
-export const openedCardAction = (payload: { name: string, link: string }) => ({
+export const openedCardAction = (payload: { name: string, link: string }): IActionObject => ({
   type: cardActions.OPENED_CARD,
   payload: payload,
 });
-export const deletedCardAction = (payload: string) => ({
+export const deletedCardAction = (payload: string): IActionObject => ({
   type: cardActions.DELETED_CARD,
   payload: payload,
 });

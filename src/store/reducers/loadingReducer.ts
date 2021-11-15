@@ -1,12 +1,23 @@
+import { IActionObject } from './authReducer';
+
+/**
+ * Интерфейс для дефолтного состояния loadingReducer.
+ */
+export interface ILoading {
+  isLoading: boolean
+}
+
 /**
  * Дефолтное состояние для loadingReducer.
  */
-const loadingState: { isLoading: boolean } = {
+const loadingState: ILoading = {
   isLoading: false,
 };
 
 /**
  * Перечисление actions для loadingReducer.
+ * LOADING - action для статуса загрузки информации на сервер.
+ * LOADED - action для статуса окончания загрузки информации на сервер.
  */
 enum loadingActions {
   LOADING = "LOADING",
@@ -20,7 +31,7 @@ enum loadingActions {
  * @param action - action, отправленный в loadingReducer.
  */
 export const loadingReducer = (
-  state: { isLoading: boolean } = loadingState,
+  state: ILoading = loadingState,
   action: { type: string, payload: { isLoading: boolean } },
 ) => {
   switch (action.type) {
@@ -34,7 +45,7 @@ export const loadingReducer = (
 };
 
 /**
- * Экспорт actions данного редьюсера для dispatch в App.js
+ * Экспорт actions данного редьюсера для dispatch в App.js.
  */
-export const loadingDataAction = () => ({ type: loadingActions.LOADING });
-export const loadedDataAction = () => ({ type: loadingActions.LOADED });
+export const loadingDataAction = (): IActionObject => ({ type: loadingActions.LOADING });
+export const loadedDataAction = (): IActionObject => ({ type: loadingActions.LOADED });

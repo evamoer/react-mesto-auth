@@ -1,10 +1,21 @@
 /**
  * Интерфейс для дефолтного состояния authReducer.
+ * @prop isRegistered - состояние регистрации пользователя.
+ * @prop isLoggedIn - состояние логина пользователя.
+ * @prop userEmail - email, введённый пользователем.
  */
 export interface IAuth {
   isRegistered: boolean,
   isLoggedIn: boolean,
   userEmail: string
+}
+
+/**
+ * Интерфейс для дефолтного состояния Action.
+ */
+export interface IActionObject {
+  type: string;
+  payload?: any;
 }
 
 /**
@@ -18,6 +29,10 @@ const authState: IAuth = {
 
 /**
  * Перечисление actions для authReducer.
+ * LOG_IN - action логина пользователя.
+ * LOG_OUT - action логаута пользователя.
+ * REGISTERED - action для удачной регистрации пользователя.
+ * UNREGISTERED - action для неудачной регистрации пользователя.
  */
 enum authActions {
   LOG_IN = "LOG_IN",
@@ -27,12 +42,15 @@ enum authActions {
 };
 
 /**
- * Редьюсер для авторизации пользователя
+ * Редьюсер для авторизации пользователя.
  *
  * @param state - дефолтное состояние параметров isRegistered, isLoggedIn, userEmail.
  * @param action - action, отправленный в authReducer.
  */
-export const authReducer = (state: { isRegistered: boolean, isLoggedIn: boolean, userEmail: string } = authState, action: { type: string, payload: string }) => {
+export const authReducer = (
+  state: IAuth = authState,
+  action: { type: string, payload: string }
+) => {
   switch (action.type) {
     case authActions.LOG_IN:
       return {
@@ -52,9 +70,9 @@ export const authReducer = (state: { isRegistered: boolean, isLoggedIn: boolean,
 };
 
 /**
- * Экспорт actions данного редьюсера для dispatch в App.js
+ * Экспорт actions данного редьюсера для dispatch в App.js.
  */
-export const loginAction = (payload: string) => ({ type: authActions.LOG_IN, payload: payload });
-export const logoutAction = () => ({ type: authActions.LOG_OUT });
-export const registerAction = () => ({ type: authActions.REGISTERED });
-export const unregisterAction = () => ({ type: authActions.UNREGISTERED });
+export const loginAction = (payload: string): IActionObject => ({ type: authActions.LOG_IN, payload: payload });
+export const logoutAction = (): IActionObject => ({ type: authActions.LOG_OUT });
+export const registerAction = (): IActionObject => ({ type: authActions.REGISTERED });
+export const unregisterAction = (): IActionObject => ({ type: authActions.UNREGISTERED });

@@ -1,7 +1,8 @@
+import { IActionObject } from './authReducer';
+
 /**
  * Интерфейс для дефолтного состояния userReducer.
  */
-
 export interface IUser {
   name: string,
   about: string,
@@ -13,7 +14,6 @@ export interface IUser {
 /**
  * Дефолтное состояние для userReducer.
  */
-
 export const userState: IUser = {
   name: "",
   about: "",
@@ -25,22 +25,16 @@ const GET_USER: string = "GET_USER";
 const UPDATE_PROFILE: string = "UPDATE_PROFILE";
 const UPDATE_AVATAR: string = "UPDATE_AVATAR";
 
+/**
+ * Функция-редьюсер для взаимодействия с данными текущего пользователя.
+ *
+ * @param state - дефолтное состояние данных текущего пользователя.
+ * @param action - action, отправленный в userReducer.
+ */
 export const userReducer = (
-  state: {
-    name: string,
-    about: string,
-    avatar: string,
-    cohort: string,
-    _id: string,
-  } = userState,
+  state: IUser = userState,
   action: {
-    type: string, payload: {
-      name: string,
-      about: string,
-      avatar: string,
-      cohort: string,
-      _id: string,
-    }
+    type: string, payload: IUser
   }) => {
   switch (action.type) {
     case GET_USER: {
@@ -69,13 +63,10 @@ export const userReducer = (
   }
 };
 
-export const getUserAction = (payload: {
-  name: string,
-  about: string,
-  avatar: string,
-  cohort: string,
-  _id: string,
-}) => ({
+/**
+ * Экспорт actions данного редьюсера для dispatch в App.js
+ */
+export const getUserAction = (payload: IUser): IActionObject => ({
   type: GET_USER,
   payload: payload,
 });
@@ -83,14 +74,14 @@ export const getUserAction = (payload: {
 export const updateProfileAction = (payload: {
   name: string,
   about: string,
-}) => ({
+}): IActionObject => ({
   type: UPDATE_PROFILE,
   payload: payload,
 });
 
 export const updateAvatarAction = (payload: {
   avatar: string,
-}) => ({
+}): IActionObject => ({
   type: UPDATE_AVATAR,
   payload: payload,
 });

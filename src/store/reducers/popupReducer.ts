@@ -1,7 +1,8 @@
+import { IActionObject } from './authReducer';
+
 /**
  * Интерфейс для дефолтного состояния popupReducer.
  */
-
 export interface IPopup {
   editProfilePopupState: boolean,
   editAvatarPopupState: boolean,
@@ -25,6 +26,8 @@ const popupState: IPopup = {
 
 /**
  * Перечисление actions для popupReducer.
+ * OPEN - action для открытия попапа.
+ * CLOSE - action для закрытия попапа.
  */
 enum popupActions {
   OPEN = "OPEN",
@@ -53,8 +56,8 @@ export const popupReducer = (
 /**
  * Экспорт actions данного редьюсера для dispatch в App.js
  */
-export const openPopupAction = (payload: string) => ({
+export const openPopupAction = (payload: string): IActionObject => ({
   type: popupActions.OPEN,
   payload,
 });
-export const closePopupAction = () => ({ type: popupActions.CLOSE });
+export const closePopupAction = (): IActionObject => ({ type: popupActions.CLOSE });
