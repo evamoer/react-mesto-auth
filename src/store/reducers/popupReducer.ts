@@ -42,12 +42,12 @@ enum popupActions {
  */
 export const popupReducer = (
   state: IPopup = popupState,
-  action: { type: string, payload: string }) => {
+  action: IActionObject): IPopup => {
   switch (action.type) {
     case popupActions.OPEN:
       return { ...state, [`${action.payload}State`]: true }
     case popupActions.CLOSE:
-      return { popupState };
+      return popupState;
     default:
       return state;
   }

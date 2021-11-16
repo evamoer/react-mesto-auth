@@ -32,8 +32,8 @@ enum loadingActions {
  */
 export const loadingReducer = (
   state: ILoading = loadingState,
-  action: { type: string, payload: { isLoading: boolean } },
-) => {
+  action: IActionObject,
+): ILoading => {
   switch (action.type) {
     case loadingActions.LOADING:
       return { ...state, isLoading: true };

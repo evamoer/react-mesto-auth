@@ -49,8 +49,8 @@ enum authActions {
  */
 export const authReducer = (
   state: IAuth = authState,
-  action: { type: string, payload: string }
-) => {
+  action: IActionObject
+): IAuth => {
   switch (action.type) {
     case authActions.LOG_IN:
       return {

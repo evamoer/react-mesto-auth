@@ -30,8 +30,8 @@ enum galleryActions {
  */
 export const galleryReducer = (
   state: ICard[] = galleryState,
-  action: { type: string, payload: any }
-) => {
+  action: IActionObject
+): ICard[] => {
   switch (action.type) {
     case galleryActions.GET_CARDS:
       return [...galleryState, ...action.payload];

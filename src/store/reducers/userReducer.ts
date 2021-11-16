@@ -33,9 +33,7 @@ const UPDATE_AVATAR: string = "UPDATE_AVATAR";
  */
 export const userReducer = (
   state: IUser = userState,
-  action: {
-    type: string, payload: IUser
-  }) => {
+  action: IActionObject): IUser => {
   switch (action.type) {
     case GET_USER: {
       return {

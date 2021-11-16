@@ -48,10 +48,8 @@ enum cardActions {
  */
 export const cardReducer = (
   state: ICard = cardState,
-  action: {
-    type: string, payload: { _id: string, name: string, link: string }
-  }
-) => {
+  action: IActionObject
+): ICard => {
   switch (action.type) {
     case cardActions.OPENED_CARD:
       return { ...cardState, ...action.payload };
