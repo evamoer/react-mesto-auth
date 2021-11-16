@@ -34,7 +34,7 @@ export default function PopupWithForm({
           type="button"
           aria-label="Закрыть всплывающее окно"
         ></button>
-        <h2 className="popup__title">{title}</h2>
+        <h2 className="popup__title"> {title} </h2>
         <form
           className="popup__form"
           action="/"

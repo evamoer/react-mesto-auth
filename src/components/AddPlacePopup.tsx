@@ -1,26 +1,35 @@
-import React, { SyntheticEvent, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import useFormAndValidation from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
-import { RootState } from "../store/store"
+import { RootState } from "../store/store";
 
 /**
- * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
- * Включает в себя компонент PopupWithForm.
- *
+ * Интерфейс для AddPlacePopup.
  * @prop onClose - функция закрытия попапа.
  * @prop onAddPlace - обработчик данных формы при сабмите.
  */
-const AddPlacePopup = ({ onClose, onAddPlace}) => {
+interface AddPlacePopupProps {
+  onClose: () => void;
+  onAddPlace: (values: { name?: string; link?: string }) => void;
+}
+/**
+ * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
+ * Включает в себя компонент PopupWithForm.
+ */
+const AddPlacePopup: React.FunctionComponent<AddPlacePopupProps> = ({
+  onClose,
+  onAddPlace,
+}) => {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
-  const { addPlacePopupState } = useSelector((state) => state.popup);
+  const { addPlacePopupState } = useSelector((state: RootState) => state.popup);
 
   /**
    * Параметр загрузки данных на сервер.
    */
-  const isLoading = useSelector((state) => state.loading.isLoading);
+  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
 
   /**
    * Параметры для валидации формы.
@@ -41,7 +50,7 @@ const AddPlacePopup = ({ onClose, onAddPlace}) => {
   /**
    * Обработчик сабмита формы.
    */
-  const handleFormSubmit = (evt) => {
+  const handleFormSubmit = (evt: React.ChangeEvent<HTMLFormElement>) => {
     evt.preventDefault();
     onAddPlace(values);
   };
@@ -67,8 +76,8 @@ const AddPlacePopup = ({ onClose, onAddPlace}) => {
           value={values?.name || ""}
           onChange={handleChange}
           required
-          minLength="2"
-          maxLength="30"
+          minLength={2}
+          maxLength={30}
         />
         {errors?.name && (
           <span className="popup__error" id="cardTitleInputError">
@@ -96,6 +105,6 @@ const AddPlacePopup = ({ onClose, onAddPlace}) => {
       </div>
     </PopupWithForm>
   );
-}
+};
 
 export default AddPlacePopup;
