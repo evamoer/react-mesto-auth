@@ -2,14 +2,14 @@ import React, { useState, useCallback } from "react";
 
 export interface inputValues {
   name?: string;
-  description?: string;
+  about?: string;
   link?: string;
   avatar?: string;
 }
 
 export interface errorValues {
   name?: string;
-  description?: string;
+  about?: string;
   link?: string;
   avatar?: string;
 }

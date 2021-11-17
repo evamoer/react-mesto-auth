@@ -14,6 +14,7 @@ interface AddPlacePopupProps {
   onClose: () => void;
   onAddPlace: (values: inputValues) => void;
 }
+
 /**
  * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
  * Включает в себя компонент PopupWithForm.

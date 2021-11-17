@@ -1,6 +1,7 @@
+import React from "react";
+
 /**
- * PopupWithForm - компонент попапа с формой.
- *
+ * Интерфейс для PopupWithForm.
  * @prop title - название формы, отображающейся в попапе.
  * @prop name - имя формы.
  * @prop submitButtonText - текст кнопки сабмита (меняется при выполнении запросы к api).
@@ -10,7 +11,21 @@
  * @prop children - дочерние элементами формы (инпуты).
  * @prop isValid - состояние валидности формы.
  */
-export default function PopupWithForm({
+interface PopupWithFormProps {
+  title: string;
+  name: string;
+  submitButtonText: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (evt: React.ChangeEvent<HTMLFormElement>) => void;
+  children: React.ReactElement | React.ReactNode;
+  isValid: boolean;
+}
+
+/**
+ * PopupWithForm - компонент попапа с формой.
+ */
+const PopupWithForm: React.FunctionComponent<PopupWithFormProps> = ({
   title,
   name,
   submitButtonText,
@@ -19,7 +34,7 @@ export default function PopupWithForm({
   onSubmit,
   children,
   isValid,
-}) {
+}) => {
   /**
    * Параметр класса попапа.
    */
@@ -56,4 +71,6 @@ export default function PopupWithForm({
       </div>
     </div>
   );
-}
+};
+
+export default PopupWithForm;
