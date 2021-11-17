@@ -16,6 +16,7 @@ interface PopupWithFormProps {
   name: string;
   submitButtonText: string;
   isOpen: boolean;
+  onMouseDown: (evt: React.MouseEvent) => void;
   onClose: () => void;
   onSubmit: (evt: React.ChangeEvent<HTMLFormElement>) => void;
   children: React.ReactElement | React.ReactNode;
@@ -30,6 +31,7 @@ const PopupWithForm: React.FunctionComponent<PopupWithFormProps> = ({
   name,
   submitButtonText,
   isOpen,
+  onMouseDown,
   onClose,
   onSubmit,
   children,
@@ -41,7 +43,7 @@ const PopupWithForm: React.FunctionComponent<PopupWithFormProps> = ({
   const popupClassName = `popup ${isOpen && "popup_opened"}`;
 
   return (
-    <div className={popupClassName} onMouseDown={onClose}>
+    <div className={popupClassName} onMouseDown={onMouseDown}>
       <div className="popup__container">
         <button
           className="button popup__button_type_close"

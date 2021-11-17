@@ -7,6 +7,7 @@ import { RootState } from "../store/store";
  * @prop onClose - функция закрытия попапа.
  */
 interface InfoTooltipProps {
+  onMouseDown: (evt: React.MouseEvent) => void;
   onClose: () => void;
 }
 
@@ -14,6 +15,7 @@ interface InfoTooltipProps {
  * InfoTooltip - компонент попапа с формой добавления карточки в галерею.
  */
 const InfoTooltip: React.FunctionComponent<InfoTooltipProps> = ({
+  onMouseDown,
   onClose,
 }) => {
   /**
@@ -42,7 +44,7 @@ const InfoTooltip: React.FunctionComponent<InfoTooltipProps> = ({
   }`;
 
   return (
-    <div className={popupClassName} onMouseDown={onClose}>
+    <div className={popupClassName} onMouseDown={onMouseDown}>
       <div className="popup__container">
         <button
           className="button popup__button_type_close"

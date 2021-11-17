@@ -1,5 +1,5 @@
-import { ICard } from './cardReducer';
-import { IActionObject } from './authReducer';
+import { ICard } from "./cardReducer";
+import { IActionObject } from "./authReducer";
 
 /**
  * Дефолтное состояние для galleryReducer.
@@ -18,8 +18,8 @@ enum galleryActions {
   GET_CARDS = "GET_CARDS",
   ADD_CARD = "ADD_CARD",
   LIKE_CARD = "LIKE_CARD",
-  DELETE_CARD = "DELETE_CARD"
-};
+  DELETE_CARD = "DELETE_CARD",
+}
 
 /**
  * Редьюсер для взаимодействия с галереей: загрузка всех карточек, добавление новой карточки,
@@ -44,7 +44,7 @@ export const galleryReducer = (
         ),
       ];
     case galleryActions.DELETE_CARD:
-      return [...state.filter((card) => card._id !== action.payload)];
+      return [...state.filter((card) => card._id !== action.payload.cardId)];
     default:
       return state;
   }
@@ -63,12 +63,15 @@ export const addCardAction = (payload: ICard): IActionObject => ({
   payload: payload,
 });
 
-export const likeCardAction = (payload: ICard | string): IActionObject => ({
+export const likeCardAction = (payload: {
+  cardId?: string;
+  newCard?: ICard;
+}): IActionObject => ({
   type: galleryActions.LIKE_CARD,
   payload: payload,
 });
 
-export const deleteCardAction = (payload: string): IActionObject => ({
+export const deleteCardAction = (payload: any): IActionObject => ({
   type: galleryActions.DELETE_CARD,
   payload: payload,
 });

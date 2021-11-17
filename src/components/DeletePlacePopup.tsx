@@ -9,6 +9,7 @@ import PopupWithForm from "./PopupWithForm";
  * @prop onApproveDeletePlace - обработчик подтверждения удаления карточки.
  */
 interface DeletePlacePopupProps {
+  onMouseDown: (evt: React.MouseEvent) => void;
   onClose: () => void;
   onApproveDeletePlace: () => void;
 }
@@ -21,6 +22,7 @@ interface DeletePlacePopupProps {
  * @prop onApproveDeletePlace - обработчик подтверждения удаления карточки.
  */
 const DeletePlacePopup: React.FunctionComponent<DeletePlacePopupProps> = ({
+  onMouseDown,
   onClose,
   onApproveDeletePlace,
 }) => {
@@ -45,6 +47,7 @@ const DeletePlacePopup: React.FunctionComponent<DeletePlacePopupProps> = ({
       name="delete-card"
       submitButtonText="Да"
       isOpen={deletePlacePopupState}
+      onMouseDown={onMouseDown}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       isValid={true}

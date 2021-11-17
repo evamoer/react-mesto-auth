@@ -1,19 +1,33 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 import Card from "./Card";
 
 /**
- * Gallery - компонент галереи.
- *
+ * Интерфейс для Gallery.
  * @prop onImageCard - обработчик клика на изображение карточки.
  * @prop onCardLike - обработчик клика на кнопку лайка карточки.
  * @prop onCardDelete - обработчик клика на кнопку удаления карточки.
  */
-export default function Gallery({ onImageCard, onCardLike, onCardDelete }) {
+
+interface GalleryProps {
+  onImageCard: (values: { name: string; link: string }) => void;
+  onCardLike: (likes: any[], _id: string) => void;
+  onCardDelete: (_id: string) => void;
+}
+
+/**
+ * Gallery - компонент галереи.
+ */
+const Gallery: React.FunctionComponent<GalleryProps> = ({
+  onImageCard,
+  onCardLike,
+  onCardDelete,
+}) => {
   /**
    * Параметр карточек галереи.
    */
-  const cards = useSelector((state) => state.cards);
+  const cards = useSelector((state: RootState) => state.cards);
 
   return (
     <section className="gallery content__gallery">
@@ -34,4 +48,6 @@ export default function Gallery({ onImageCard, onCardLike, onCardDelete }) {
       </ul>
     </section>
   );
-}
+};
+
+export default Gallery;

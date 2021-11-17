@@ -11,6 +11,7 @@ import PopupWithForm from "./PopupWithForm";
  * @prop onUpdateUser - обработчик данных формы при сабмите.
  */
 interface EditProfilePopupProps {
+  onMouseDown: (evt: React.MouseEvent) => void;
   onClose: () => void;
   onUpdateUser: (values: inputValues) => void;
 }
@@ -20,6 +21,7 @@ interface EditProfilePopupProps {
  * Включает в себя компонент PopupWithForm.
  */
 const EditProfilePopup: React.FunctionComponent<EditProfilePopupProps> = ({
+  onMouseDown,
   onClose,
   onUpdateUser,
 }) => {
@@ -68,6 +70,7 @@ const EditProfilePopup: React.FunctionComponent<EditProfilePopupProps> = ({
       name="editProfileForm"
       submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       isOpen={editProfilePopupState}
+      onMouseDown={onMouseDown}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       isValid={isValid}

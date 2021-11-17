@@ -1,14 +1,22 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 import logoPath from "../images/logo.svg";
 
 /**
- * Header - компонент хэдера.
- *
+ * Интерфейс для Header.
  * @prop onLogout - обработчик клика на кнопку Выйти.
  */
-export default function Header({ onLogout }) {
+
+interface HeaderProps {
+  onLogout: () => void;
+}
+
+/**
+ * Header - компонент хэдера.
+ */
+const Header: React.FunctionComponent<HeaderProps> = ({ onLogout }) => {
   /**
    * Хук для определения текущего URL.
    */
@@ -22,7 +30,9 @@ export default function Header({ onLogout }) {
   /**
    * Параметры статуса логина пользователя и его email.
    */
-  const { isLoggedIn, userEmail } = useSelector((state) => state.auth);
+  const { isLoggedIn, userEmail } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   return (
     <header className="header page__header">
@@ -53,4 +63,6 @@ export default function Header({ onLogout }) {
       </div>
     </header>
   );
-}
+};
+
+export default Header;

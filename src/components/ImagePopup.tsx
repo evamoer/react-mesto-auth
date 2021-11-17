@@ -8,6 +8,7 @@ import { RootState } from "../store/store";
  */
 interface ImagePopupProps {
   onClose: () => void;
+  onMouseDown: (evt: React.MouseEvent) => void;
 }
 
 /**
@@ -15,7 +16,10 @@ interface ImagePopupProps {
  *
  * @prop onClose - функция закрытия попапа.
  */
-const ImagePopup: React.FunctionComponent<ImagePopupProps> = ({ onClose }) => {
+const ImagePopup: React.FunctionComponent<ImagePopupProps> = ({
+  onMouseDown,
+  onClose,
+}) => {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
@@ -31,7 +35,7 @@ const ImagePopup: React.FunctionComponent<ImagePopupProps> = ({ onClose }) => {
       className={`popup popup_type_full-image ${
         card.name && card.link && imagePopupState && "popup_opened"
       }`}
-      onMouseDown={onClose}
+      onMouseDown={onMouseDown}
     >
       <figure className="popup__container popup__container_type_full-image">
         <button

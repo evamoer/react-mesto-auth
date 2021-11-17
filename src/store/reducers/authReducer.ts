@@ -5,9 +5,9 @@
  * @prop userEmail - email, введённый пользователем.
  */
 export interface IAuth {
-  isRegistered: boolean,
-  isLoggedIn: boolean,
-  userEmail: string
+  isRegistered: boolean;
+  isLoggedIn: boolean;
+  userEmail: string;
 }
 
 /**
@@ -38,8 +38,8 @@ enum authActions {
   LOG_IN = "LOG_IN",
   LOG_OUT = "LOG_OUT",
   REGISTERED = "REGISTERED",
-  UNREGISTERED = "UNREGISTERED"
-};
+  UNREGISTERED = "UNREGISTERED",
+}
 
 /**
  * Редьюсер для авторизации пользователя.
@@ -72,7 +72,16 @@ export const authReducer = (
 /**
  * Экспорт actions данного редьюсера для dispatch в App.js.
  */
-export const loginAction = (payload: string): IActionObject => ({ type: authActions.LOG_IN, payload: payload });
-export const logoutAction = (): IActionObject => ({ type: authActions.LOG_OUT });
-export const registerAction = (): IActionObject => ({ type: authActions.REGISTERED });
-export const unregisterAction = (): IActionObject => ({ type: authActions.UNREGISTERED });
+export const loginAction = (payload: any): IActionObject => ({
+  type: authActions.LOG_IN,
+  payload: payload,
+});
+export const logoutAction = (): IActionObject => ({
+  type: authActions.LOG_OUT,
+});
+export const registerAction = (): IActionObject => ({
+  type: authActions.REGISTERED,
+});
+export const unregisterAction = (): IActionObject => ({
+  type: authActions.UNREGISTERED,
+});

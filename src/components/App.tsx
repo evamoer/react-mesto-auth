@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, SyntheticEvent } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../utils/api";
@@ -16,6 +16,8 @@ import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
 import { RootState } from "../store/store";
+import { ICard } from "../store/reducers/cardReducer";
+import { inputValues } from "../hooks/validationHook";
 import {
   openPopupAction,
   closePopupAction,
@@ -50,7 +52,7 @@ import {
  * App - главный компонент приложения.
  * Включает в себя все компоненты и логику работу приложения.
  */
-const App = () => {
+const App: React.FunctionComponent = () => {
   /**
    * Хук для подключения dispatch.
    */
@@ -64,17 +66,17 @@ const App = () => {
   /**
    * Параметр статуса логина пользователя
    */
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
 
   /**
    * Параметр с данными текущего пользователя.
    */
-  const currentUser = useSelector((state) => state.user);
+  const currentUser = useSelector((state: RootState) => state.user);
 
   /**
    * Параметр карточки: opened - для полного изображения карточки, deleted - для удаляемой карточки.
    */
-  const card = useSelector((state) => state.card);
+  const card = useSelector((state: RootState) => state.card);
 
   /**
    * Функция открытия попапа. Дополнительно устанавливается слушатель нажатия на Esc.
@@ -82,31 +84,36 @@ const App = () => {
    * @param popupType - тип попапа
    */
 
-  const onOpenPopup = (popupType) => {
+  const onOpenPopup = (popupType: string): void => {
     dispatch(openPopupAction(popupType));
     document.addEventListener("keydown", handleEscClick);
   };
 
   /**
-   * Функция закрытия попапа. Дополнительно удаляется слушатель нажатия на Esc.
+   * Функция закрытия попапа.
    */
-  const onClosePopup = (evt) => {
-    //если клик не по оверлэю, то не закрываем попап
-    if (evt && evt.target !== evt.currentTarget) {
-      return;
-    }
+  const closePopup = () => {
     dispatch(closePopupAction());
     document.removeEventListener("keydown", handleEscClick);
   };
 
   /**
+   * Обработчик нажатия на оверлэй.
+   */
+  const handleOverlayClick = (evt: React.MouseEvent) => {
+    if (evt.target === evt.currentTarget) {
+      closePopup();
+    }
+  };
+
+  /**
    * Обработчик нажатия на Esc.
    */
-  const handleEscClick = useCallback((evt) => {
+  const handleEscClick = (evt: KeyboardEvent) => {
     if (evt.key === "Escape") {
-      onClosePopup();
+      closePopup();
     }
-  }, []);
+  };
 
   /**
    * Обработчик регистрации пользователя:
@@ -115,7 +122,7 @@ const App = () => {
    * @param password - пароль, вводимый пользователем
    * @param email - email, вводимый пользователя
    */
-  const handleRegister = (password, email) => {
+  const handleRegister = (password: string, email: string): void => {
     apiAuth
       .register(password, email)
       .then(() => {
@@ -132,7 +139,7 @@ const App = () => {
   /**
    * Хук для проверки наличия токена пользователя в LocalStorage при открытии сайта.
    */
-  useEffect(() => {
+  useEffect((): void => {
     checkUserToken();
   }, []);
 
@@ -141,7 +148,7 @@ const App = () => {
    * При его наличии, устанавливаем, что пользователь залогинен, и перенаправляем на "/".
    *
    */
-  const checkUserToken = () => {
+  const checkUserToken = (): void => {
     const token = localStorage.getItem("token");
     if (token) {
       apiAuth
@@ -159,7 +166,7 @@ const App = () => {
   /**
    * Обработчик ошибок, возникающих при запросах.
    */
-  const handleError = (error) => {
+  const handleError = (error: string): void => {
     console.log(error);
   };
 
@@ -170,7 +177,7 @@ const App = () => {
    * @param password - пароль, вводимый пользователем
    * @param email - email, вводимый пользователя
    */
-  const handleLogin = (password, email) => {
+  const handleLogin = (password: string, email: string): void => {
     apiAuth
       .authorize(password, email)
       .then((data) => {
@@ -187,7 +194,7 @@ const App = () => {
    * Обработчик разлогинивания пользователя из аккаунта:
    * удаляем токен из LocalStorage.
    */
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     localStorage.removeItem("token");
     dispatch(logoutAction());
     history.push("/sign-in");
@@ -196,7 +203,7 @@ const App = () => {
   /**
    * Хук с запросом к api всех карточек с сервера, обновления стейта с карточками.
    */
-  useEffect(() => {
+  useEffect((): void => {
     api
       .getCards()
       .then((cardsData) => dispatch(getCardsAction(cardsData)))
@@ -209,7 +216,7 @@ const App = () => {
    * @param likes - массив с пользователями, лайкнувшими карточку.
    * @param cardId - id карточки, выбранной для установки лайка.
    */
-  const handleCardLike = (likes, cardId) => {
+  const handleCardLike = (likes: any[], cardId: string): void => {
     const isLiked = likes.some((user) => user._id === currentUser._id);
     api
       .changeLikeCardStatus(cardId, isLiked)
@@ -222,13 +229,13 @@ const App = () => {
   /**
    * Функция подтверждения удаления карточки.
    */
-  const onApproveDeletePlace = () => {
-    onClosePopup();
+  const onApproveDeletePlace = (): void => {
+    // onClosePopup();
     if (card._id) {
       api
         .deleteCard(card._id)
-        .then(dispatch(deleteCardAction(card._id)))
-        .then(() => onClosePopup())
+        .then(() => dispatch(deleteCardAction(card._id)))
+        .then(() => closePopup())
         .catch((err) => console.log(`Ошибка: ${err}`));
     }
   };
@@ -238,7 +245,7 @@ const App = () => {
    *
    * @param cardId - id карточки, выбранной для удаления.
    */
-  const handleCardDeleteButtonClick = (cardId) => {
+  const handleCardDeleteButtonClick = (cardId: string): void => {
     onOpenPopup("deletePlacePopup");
     dispatch(deletedCardAction(cardId));
   };
@@ -248,12 +255,12 @@ const App = () => {
    *
    * @param inputValuesData - данные новой карточки для добавления в галерею, введенные в форму пользователем..
    */
-  const handleAddPlaceSubmit = (inputValuesData) => {
+  const handleAddPlaceSubmit = (inputValuesData: inputValues): void => {
     dispatch(loadingDataAction());
     api
       .addCard(inputValuesData)
       .then((newCard) => dispatch(addCardAction(newCard)))
-      .then(() => onClosePopup())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => dispatch(loadedDataAction()));
   };
@@ -261,7 +268,7 @@ const App = () => {
   /**
    * Хук с запросом к api данных текущего пользователя.
    */
-  useEffect(() => {
+  useEffect((): void => {
     api
       .getUserData()
       .then((user) => dispatch(getUserAction(user)))
@@ -273,12 +280,12 @@ const App = () => {
    *
    * @param inputValuesData - новые данные профиля, введенные в форму пользователем.
    */
-  const handleUpdateUser = (inputValuesData) => {
+  const handleUpdateUser = (inputValuesData: inputValues): void => {
     dispatch(loadingDataAction());
     api
       .updateUserData(inputValuesData)
       .then((data) => dispatch(updateProfileAction(data)))
-      .then(() => onClosePopup())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => dispatch(loadedDataAction()));
   };
@@ -288,12 +295,13 @@ const App = () => {
    *
    * @param inputValuesData - новые данные аватара (ссылка на изображение), введенные в форму пользователем.
    */
-  const handleUpdateAvatar = (inputValuesData) => {
+  const handleUpdateAvatar = (inputValuesData: inputValues): void => {
+    const { avatar } = inputValuesData;
     dispatch(loadingDataAction());
     api
-      .updateAvatar(inputValuesData)
+      .updateAvatar({ avatar })
       .then((data) => dispatch(updateAvatarAction(data)))
-      .then(() => onClosePopup())
+      .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))
       .finally(() => dispatch(loadedDataAction()));
   };
@@ -304,7 +312,7 @@ const App = () => {
    *
    * @param card - объект с данными карточки (название name, ссылка link)
    */
-  const handleCardClick = (card) => {
+  const handleCardClick = (card: ICard) => {
     dispatch(openedCardAction(card));
     onOpenPopup("imagePopup");
   };
@@ -320,7 +328,6 @@ const App = () => {
           <Register onRegister={handleRegister} />
         </Route>
         <ProtectedRoute
-          path="/"
           component={Main}
           onOpenPopup={onOpenPopup}
           onImageCard={handleCardClick}
@@ -330,20 +337,27 @@ const App = () => {
         {isLoggedIn && <Footer />}
       </Switch>
       <EditProfilePopup
-        onClose={onClosePopup}
+        onMouseDown={handleOverlayClick}
+        onClose={closePopup}
         onUpdateUser={handleUpdateUser}
       />
       <EditAvatarPopup
-        onClose={onClosePopup}
+        onMouseDown={handleOverlayClick}
+        onClose={closePopup}
         onUpdateAvatar={handleUpdateAvatar}
       />
-      <AddPlacePopup onClose={onClosePopup} onAddPlace={handleAddPlaceSubmit} />
+      <AddPlacePopup
+        onMouseDown={handleOverlayClick}
+        onClose={closePopup}
+        onAddPlace={handleAddPlaceSubmit}
+      />
       <DeletePlacePopup
-        onClose={onClosePopup}
+        onMouseDown={handleOverlayClick}
+        onClose={closePopup}
         onApproveDeletePlace={onApproveDeletePlace}
       />
-      <ImagePopup onClose={onClosePopup} />
-      <InfoTooltip onClose={onClosePopup} />
+      <ImagePopup onMouseDown={handleOverlayClick} onClose={closePopup} />
+      <InfoTooltip onMouseDown={handleOverlayClick} onClose={closePopup} />
     </>
   );
 };
