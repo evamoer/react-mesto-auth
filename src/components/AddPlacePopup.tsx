@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import useFormAndValidation from "../hooks/validationHook";
-import PopupWithForm from "./PopupWithForm";
 import { RootState } from "../store/store";
+import useFormAndValidation from "../hooks/validationHook";
+import { inputValues } from "../hooks/validationHook";
+import PopupWithForm from "./PopupWithForm";
 
 /**
  * Интерфейс для AddPlacePopup.
@@ -11,7 +12,7 @@ import { RootState } from "../store/store";
  */
 interface AddPlacePopupProps {
   onClose: () => void;
-  onAddPlace: (values: { name?: string; link?: string }) => void;
+  onAddPlace: (values: inputValues) => void;
 }
 /**
  * AddPlacePopup - компонент попапа с формой добавления карточки в галерею.
