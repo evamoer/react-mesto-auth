@@ -1,20 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 import useFormAndValidation from "../hooks/validationHook";
+import { inputValues } from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
+
+/**
+ * Интерфейс для EditAvatarPopup.
+ * @prop onClose - функция закрытия попапа.
+ * @prop onUpdateAvatar - обработчик данных формы при сабмите.
+ */
+interface EditAvatarPopupProps {
+  onClose: () => void;
+  onUpdateAvatar: (values: inputValues) => void;
+}
 
 /**
  * EditAvatarPopup - компонент попапа с формой изменения аватара пользователя.
  * Включает в себя компонент PopupWithForm.
- *
- * @prop onClose - функция закрытия попапа.
- * @prop onUpdateAvatar - обработчик данных формы при сабмите.
  */
-export default function EditAvatarPopup({ onClose, onUpdateAvatar }) {
+const EditAvatarPopup: React.FunctionComponent<EditAvatarPopupProps> = ({
+  onClose,
+  onUpdateAvatar,
+}) => {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
-  const { editAvatarPopupState } = useSelector((state) => state.popup);
+  const { editAvatarPopupState } = useSelector(
+    (state: RootState) => state.popup
+  );
 
   /**
    * Параметры для валидации формы.
@@ -25,12 +39,12 @@ export default function EditAvatarPopup({ onClose, onUpdateAvatar }) {
   /**
    * Параметр загрузки данных на сервер.
    */
-  const isLoading = useSelector((state) => state.loading.isLoading);
+  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
 
   /**
    * Хук установки начального состояния формы при открытии попапа.
    */
-  React.useEffect(() => {
+  useEffect(() => {
     if (editAvatarPopupState) {
       resetForm();
       setValues({ avatar: "" });
@@ -40,7 +54,7 @@ export default function EditAvatarPopup({ onClose, onUpdateAvatar }) {
   /**
    * Обработчик сабмита формы.
    */
-  const handleFormSubmit = (evt) => {
+  const handleFormSubmit = (evt: React.ChangeEvent<HTMLFormElement>) => {
     evt.preventDefault();
     onUpdateAvatar(values);
   };
@@ -75,4 +89,6 @@ export default function EditAvatarPopup({ onClose, onUpdateAvatar }) {
       </div>
     </PopupWithForm>
   );
-}
+};
+
+export default EditAvatarPopup;

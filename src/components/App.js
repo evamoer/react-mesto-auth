@@ -15,7 +15,7 @@ import Register from "./Register";
 import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
-import { RootState } from "../store/store"
+import { RootState } from "../store/store";
 import {
   openPopupAction,
   closePopupAction,

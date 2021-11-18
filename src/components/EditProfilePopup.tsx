@@ -1,20 +1,34 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 import useFormAndValidation from "../hooks/validationHook";
+import { inputValues } from "../hooks/validationHook";
 import PopupWithForm from "./PopupWithForm";
+
+/**
+ * Интерфейс для EditProfilePopup.
+ * @prop onClose - функция закрытия попапа.
+ * @prop onUpdateUser - обработчик данных формы при сабмите.
+ */
+interface EditProfilePopupProps {
+  onClose: () => void;
+  onUpdateUser: (values: inputValues) => void;
+}
 
 /**
  * EditProfilePopup - компонент попапа с формой добавления карточки в галерею.
  * Включает в себя компонент PopupWithForm.
- *
- * @prop onClose - функция закрытия попапа.
- * @prop onUpdateUser - обработчик данных формы при сабмите.
  */
-export default function EditProfilePopup({ onClose, onUpdateUser }) {
+const EditProfilePopup: React.FunctionComponent<EditProfilePopupProps> = ({
+  onClose,
+  onUpdateUser,
+}) => {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
-  const { editProfilePopupState } = useSelector((state) => state.popup);
+  const { editProfilePopupState } = useSelector(
+    (state: RootState) => state.popup
+  );
 
   /**
    * Параметры для валидации формы.
@@ -25,30 +39,27 @@ export default function EditProfilePopup({ onClose, onUpdateUser }) {
   /**
    * Параметры текущего пользователя.
    */
-  const { name, about } = useSelector((state) => state.user);
+  const { name, about } = useSelector((state: RootState) => state.user);
 
   /**
    * Параметр загрузки данных на сервер.
    */
-  const isLoading = useSelector((state) => state.loading.isLoading);
+  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
   /**
    * Хук установки начального состояния формы при открытии попапа.
    */
   useEffect(() => {
     if (editProfilePopupState) {
-      setValues({ name, description: about });
+      setValues({ name, about });
     }
   }, [editProfilePopupState]);
 
   /**
    * Обработчик сабмита формы.
    */
-  const handleFormSubmit = (evt) => {
+  const handleFormSubmit = (evt: React.ChangeEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    onUpdateUser({
-      name: values.name,
-      about: values.description,
-    });
+    onUpdateUser(values);
   };
 
   return (
@@ -72,8 +83,8 @@ export default function EditProfilePopup({ onClose, onUpdateUser }) {
           value={values?.name || ""}
           onChange={handleChange}
           required
-          minLength="2"
-          maxLength="40"
+          minLength={2}
+          maxLength={40}
         />
         {errors?.name && (
           <span className="popup__error" id="nameInputError">
@@ -85,22 +96,24 @@ export default function EditProfilePopup({ onClose, onUpdateUser }) {
         <input
           type="text"
           className={`popup__input ${
-            errors?.description && "popup__input_type_error"
+            errors?.about && "popup__input_type_error"
           }`}
-          name="description"
+          name="about"
           placeholder="О себе"
-          value={values?.description || ""}
+          value={values?.about || ""}
           onChange={handleChange}
           required
-          minLength="2"
-          maxLength="200"
+          minLength={2}
+          maxLength={200}
         />
-        {errors?.description && (
+        {errors?.about && (
           <span className="popup__error" id="aboutInputError">
-            {errors.description}
+            {errors.about}
           </span>
         )}
       </div>
     </PopupWithForm>
   );
-}
+};
+
+export default EditProfilePopup;

@@ -1,20 +1,30 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+
+/**
+ * Интерфейс для ImagePopup.
+ * @prop onClose - функция закрытия попапа.
+ */
+interface ImagePopupProps {
+  onClose: () => void;
+}
+
 /**
  * ImagePopup - компонент попапа с полным изображением карточки.
  *
  * @prop onClose - функция закрытия попапа.
  */
-export default function ImagePopup({ onClose }) {
+const ImagePopup: React.FunctionComponent<ImagePopupProps> = ({ onClose }) => {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
-  const { imagePopupState } = useSelector((state) => state.popup);
+  const { imagePopupState } = useSelector((state: RootState) => state.popup);
 
   /**
    * Параметр состояния карточки.
    */
-  const card = useSelector((state) => state.card);
+  const card = useSelector((state: RootState) => state.card);
 
   return (
     <div
@@ -37,4 +47,6 @@ export default function ImagePopup({ onClose }) {
       </figure>
     </div>
   );
-}
+};
+
+export default ImagePopup;

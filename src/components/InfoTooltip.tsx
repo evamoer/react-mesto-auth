@@ -1,21 +1,30 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+
+/**
+ * Интерфейс для InfoTooltip.
+ * @prop onClose - функция закрытия попапа.
+ */
+interface InfoTooltipProps {
+  onClose: () => void;
+}
 
 /**
  * InfoTooltip - компонент попапа с формой добавления карточки в галерею.
- *
- * @prop onClose - функция закрытия попапа.
  */
-export default function InfoTooltip({ onClose }) {
+const InfoTooltip: React.FunctionComponent<InfoTooltipProps> = ({
+  onClose,
+}) => {
   /**
    * Параметр состояния попапа: true - открыт, false - закрыт.
    */
-  const { infoTooltipState } = useSelector((state) => state.popup);
+  const { infoTooltipState } = useSelector((state: RootState) => state.popup);
 
   /**
    * Параметр состояния регистрации пользователя.
    */
-  const { isRegistered } = useSelector((state) => state.auth);
+  const { isRegistered } = useSelector((state: RootState) => state.auth);
 
   /**
    * Параметр класса попапа.
@@ -46,4 +55,6 @@ export default function InfoTooltip({ onClose }) {
       </div>
     </div>
   );
-}
+};
+
+export default InfoTooltip;
