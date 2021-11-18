@@ -16,9 +16,6 @@ interface DeletePlacePopupProps {
 /**
  * DeletePlacePopup - компонент попапа с формой удаления карточки в галерею.
  * Включает в себя компонент PopupWithForm.
- *
- * @prop onClose - функция закрытия попапа.
- * @prop onApproveDeletePlace - обработчик подтверждения удаления карточки.
  */
 const DeletePlacePopup: React.FunctionComponent<DeletePlacePopupProps> = ({
   onClose,
