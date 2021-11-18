@@ -5,6 +5,7 @@ import { RootState } from "../store/store";
 /**
  * Интерфейс для InfoTooltip.
  * @prop onClose - функция закрытия попапа.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  */
 interface InfoTooltipProps {
   onMouseDown: (evt: React.MouseEvent) => void;

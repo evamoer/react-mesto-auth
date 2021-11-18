@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../utils/api";
@@ -17,6 +17,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
 import { RootState } from "../store/store";
 import { ICard } from "../store/reducers/cardReducer";
+import { IUser } from "../store/reducers/userReducer";
 import { inputValues } from "../hooks/validationHook";
 import {
   openPopupAction,
@@ -216,7 +217,7 @@ const App: React.FunctionComponent = () => {
    * @param likes - массив с пользователями, лайкнувшими карточку.
    * @param cardId - id карточки, выбранной для установки лайка.
    */
-  const handleCardLike = (likes: any[], cardId: string): void => {
+  const handleCardLike = (likes: IUser[], cardId: string): void => {
     const isLiked = likes.some((user) => user._id === currentUser._id);
     api
       .changeLikeCardStatus(cardId, isLiked)
@@ -230,7 +231,6 @@ const App: React.FunctionComponent = () => {
    * Функция подтверждения удаления карточки.
    */
   const onApproveDeletePlace = (): void => {
-    // onClosePopup();
     if (card._id) {
       api
         .deleteCard(card._id)

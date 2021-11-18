@@ -9,6 +9,7 @@ import PopupWithForm from "./PopupWithForm";
  * Интерфейс для EditProfilePopup.
  * @prop onClose - функция закрытия попапа.
  * @prop onUpdateUser - обработчик данных формы при сабмите.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  */
 interface EditProfilePopupProps {
   onMouseDown: (evt: React.MouseEvent) => void;

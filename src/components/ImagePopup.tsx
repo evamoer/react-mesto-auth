@@ -5,6 +5,7 @@ import { RootState } from "../store/store";
 /**
  * Интерфейс для ImagePopup.
  * @prop onClose - функция закрытия попапа.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  */
 interface ImagePopupProps {
   onClose: () => void;

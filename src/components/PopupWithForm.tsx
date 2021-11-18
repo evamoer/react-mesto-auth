@@ -7,6 +7,7 @@ import React from "react";
  * @prop submitButtonText - текст кнопки сабмита (меняется при выполнении запросы к api).
  * @prop isOpen - состояние попапа: открыт/закрыт.
  * @prop onClose - функция закрытия попапа.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  * @prop onSubmit - обработчик сабмита формы.
  * @prop children - дочерние элементами формы (инпуты).
  * @prop isValid - состояние валидности формы.

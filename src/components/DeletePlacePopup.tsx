@@ -7,6 +7,7 @@ import PopupWithForm from "./PopupWithForm";
  * Интерфейс для DeletePlacePopup.
  * @prop onClose - функция закрытия попапа.
  * @prop onApproveDeletePlace - обработчик подтверждения удаления карточки.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  */
 interface DeletePlacePopupProps {
   onMouseDown: (evt: React.MouseEvent) => void;

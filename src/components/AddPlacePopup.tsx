@@ -7,6 +7,7 @@ import PopupWithForm from "./PopupWithForm";
 
 /**
  * Интерфейс для AddPlacePopup.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  * @prop onClose - функция закрытия попапа.
  * @prop onAddPlace - обработчик данных формы при сабмите.
  */
