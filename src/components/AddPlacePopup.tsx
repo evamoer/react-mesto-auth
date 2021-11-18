@@ -7,10 +7,12 @@ import PopupWithForm from "./PopupWithForm";
 
 /**
  * Интерфейс для AddPlacePopup.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  * @prop onClose - функция закрытия попапа.
  * @prop onAddPlace - обработчик данных формы при сабмите.
  */
 interface AddPlacePopupProps {
+  onMouseDown: (evt: React.MouseEvent) => void;
   onClose: () => void;
   onAddPlace: (values: inputValues) => void;
 }
@@ -20,6 +22,7 @@ interface AddPlacePopupProps {
  * Включает в себя компонент PopupWithForm.
  */
 const AddPlacePopup: React.FunctionComponent<AddPlacePopupProps> = ({
+  onMouseDown,
   onClose,
   onAddPlace,
 }) => {
@@ -63,6 +66,7 @@ const AddPlacePopup: React.FunctionComponent<AddPlacePopupProps> = ({
       name="addCardForm"
       submitButtonText={!isLoading ? "Создать" : "Сохранение..."}
       isOpen={addPlacePopupState}
+      onMouseDown={onMouseDown}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       isValid={isValid}

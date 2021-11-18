@@ -2,23 +2,41 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 /**
+ * Интерфейс для Register.
+ * @prop onLogin - обработчик данных, вводимых пользователем в форму, при логине.
+ */
+
+interface RegisterProps {
+  onRegister: (password: string, email: string) => void;
+}
+
+/**
+ * Интерфейс для данных формы логина пользователя.
+ */
+interface registerInputValues {
+  email: string;
+  password: string;
+}
+
+/**
  * Register - компонент со страницей регистрации пользователя.
  *
  * @prop onRegister - обработчик данных, вводимых пользователем в форму, при регистрации.
  */
-export default function Register({ onRegister }) {
+const Register: React.FunctionComponent<RegisterProps> = ({ onRegister }) => {
   /**
    * Параметр состояния инпутов формы.
    */
-  const [registerInputValues, setRegisterInputValues] = useState({
-    email: "",
-    password: "",
-  });
+  const [registerInputValues, setRegisterInputValues] =
+    useState<registerInputValues>({
+      email: "",
+      password: "",
+    });
 
   /**
    * Обработчик ввода данных в инпуты формы.
    */
-  const handleInputChange = (evt) => {
+  const handleInputChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = evt.target;
     setRegisterInputValues({
       ...registerInputValues,
@@ -29,7 +47,7 @@ export default function Register({ onRegister }) {
   /**
    * Обработчик сабмита формы.
    */
-  const handleFormSubmit = (evt) => {
+  const handleFormSubmit = (evt: React.ChangeEvent<HTMLFormElement>) => {
     evt.preventDefault();
     const { password, email } = registerInputValues;
     onRegister(password, email);
@@ -71,4 +89,6 @@ export default function Register({ onRegister }) {
       </p>
     </section>
   );
-}
+};
+
+export default Register;

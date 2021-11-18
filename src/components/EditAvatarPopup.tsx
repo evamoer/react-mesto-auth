@@ -9,8 +9,10 @@ import PopupWithForm from "./PopupWithForm";
  * Интерфейс для EditAvatarPopup.
  * @prop onClose - функция закрытия попапа.
  * @prop onUpdateAvatar - обработчик данных формы при сабмите.
+ * @prop onMouseDown - обработчик закрытия попапа по клику на оверлэй.
  */
 interface EditAvatarPopupProps {
+  onMouseDown: (evt: React.MouseEvent) => void;
   onClose: () => void;
   onUpdateAvatar: (values: inputValues) => void;
 }
@@ -20,6 +22,7 @@ interface EditAvatarPopupProps {
  * Включает в себя компонент PopupWithForm.
  */
 const EditAvatarPopup: React.FunctionComponent<EditAvatarPopupProps> = ({
+  onMouseDown,
   onClose,
   onUpdateAvatar,
 }) => {
@@ -65,6 +68,7 @@ const EditAvatarPopup: React.FunctionComponent<EditAvatarPopupProps> = ({
       name="editAvatarForm"
       submitButtonText={!isLoading ? "Сохранить" : "Сохранение..."}
       isOpen={editAvatarPopupState}
+      onMouseDown={onMouseDown}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       isValid={isValid}

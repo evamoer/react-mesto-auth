@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 /**
- * Card - компонент карточки в галерее.
- *
+ * Интерфейс для Card.
  * @prop name - название карточки.
  * @prop link - ссылка на изображение карточки.
  * @prop likes - массив пользователей, лайкнувших карточку.
@@ -13,7 +13,27 @@ import { useSelector } from "react-redux";
  * @prop onCardLike - обработчик клика на кнопку лайка карточки.
  * @prop onCardDelete - обработчик клика на кнопку удаления карточки.
  */
-export default function Card({
+
+interface CardProps {
+  name: string;
+  link: string;
+  likes: any[];
+  owner: {
+    name: string;
+    about: string;
+    avatar?: string;
+    _id: string;
+  };
+  _id: string;
+  onCardClick: (values: { name: string; link: string }) => void;
+  onCardLike: (likes: any[], _id: string) => void;
+  onCardDelete: (_id: string) => void;
+}
+
+/**
+ * Card - компонент карточки в галерее.
+ */
+const Card: React.FunctionComponent<CardProps> = ({
   name,
   link,
   likes,
@@ -22,11 +42,11 @@ export default function Card({
   onCardClick,
   onCardLike,
   onCardDelete,
-}) {
+}) => {
   /**
    * Параметры текущего пользователя.
    */
-  const currentUser = useSelector((state) => state.user);
+  const currentUser = useSelector((state: RootState) => state.user);
 
   /**
    * Параметр, определяющий, является ли пользователь создателем карточки.
@@ -90,4 +110,6 @@ export default function Card({
       </article>
     </li>
   );
-}
+};
+
+export default Card;

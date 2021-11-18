@@ -1,15 +1,30 @@
 import React, { useState } from "react";
 
 /**
- * Login - компонент со страницей логина пользователя.
- *
+ * Интерфейс для Login.
  * @prop onLogin - обработчик данных, вводимых пользователем в форму, при логине.
  */
-export default function Login({ onLogin }) {
+
+interface LoginProps {
+  onLogin: (password: string, email: string) => void;
+}
+
+/**
+ * Интерфейс для данных формы логина пользователя.
+ */
+interface loginInputValues {
+  email: string;
+  password: string;
+}
+
+/**
+ * Login - компонент со страницей логина пользователя.
+ */
+const Login: React.FunctionComponent<LoginProps> = ({ onLogin }) => {
   /**
    * Параметр состояния инпутов формы.
    */
-  const [loginInputValues, setLoginInputValues] = useState({
+  const [loginInputValues, setLoginInputValues] = useState<loginInputValues>({
     email: "",
     password: "",
   });
@@ -17,7 +32,7 @@ export default function Login({ onLogin }) {
   /**
    * Обработчик ввода данных в инпуты формы.
    */
-  const handleInputChange = (evt) => {
+  const handleInputChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = evt.target;
     setLoginInputValues({
       ...loginInputValues,
@@ -28,7 +43,7 @@ export default function Login({ onLogin }) {
   /**
    * Обработчик сабмита формы.
    */
-  const handleFormSubmit = (evt) => {
+  const handleFormSubmit = (evt: React.ChangeEvent<HTMLFormElement>) => {
     evt.preventDefault();
     const { password, email } = loginInputValues;
     onLogin(password, email);
@@ -64,4 +79,6 @@ export default function Login({ onLogin }) {
       </form>
     </section>
   );
-}
+};
+
+export default Login;

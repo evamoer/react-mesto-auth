@@ -1,16 +1,24 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+
+/**
+ * Интерфейс для Profile.
+ * @prop onOpenPopup - обработчик клика на кнопки открытия попапов.
+ */
+
+interface ProfileProps {
+  onOpenPopup: (popupType: string) => void;
+}
 
 /**
  * Profile - компонент профиля.
- *
- * @prop onOpenPopup - обработчик клика на кнопки открытия попапов.
  */
-export default function Profile({ onOpenPopup }) {
+const Profile: React.FunctionComponent<ProfileProps> = ({ onOpenPopup }) => {
   /**
    * Параметры текущего пользователя.
    */
-  const { avatar, name, about } = useSelector((state) => state.user);
+  const { avatar, name, about } = useSelector((state: RootState) => state.user);
 
   /**
    * Обработчик клика на кнопку открытия попапа редактирования профиля.
@@ -56,4 +64,6 @@ export default function Profile({ onOpenPopup }) {
       ></button>
     </section>
   );
-}
+};
+
+export default Profile;
