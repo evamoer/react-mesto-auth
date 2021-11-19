@@ -295,11 +295,10 @@ const App: React.FunctionComponent = () => {
    *
    * @param inputValuesData - новые данные аватара (ссылка на изображение), введенные в форму пользователем.
    */
-  const handleUpdateAvatar = (inputValuesData: inputValues): void => {
-    const { avatar } = inputValuesData;
+  const handleUpdateAvatar = (avatarValue: inputValues): void => {
     dispatch(loadingDataAction());
     api
-      .updateAvatar({ avatar })
+      .updateAvatar(avatarValue)
       .then((data) => dispatch(updateAvatarAction(data)))
       .then(() => closePopup())
       .catch((err) => console.log(`Ошибка: ${err}`))

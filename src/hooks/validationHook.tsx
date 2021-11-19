@@ -6,7 +6,6 @@ export interface inputValues {
   link?: string;
   avatar?: string;
 }
-
 export interface errorValues {
   name?: string;
   about?: string;
@@ -15,7 +14,12 @@ export interface errorValues {
 }
 
 export default function useFormAndValidation() {
-  const [values, setValues] = useState<inputValues>({});
+  const [values, setValues] = useState<inputValues>({
+    name: "",
+    about: "",
+    link: "",
+    avatar: "",
+  });
   const [errors, setErrors] = useState<errorValues>({});
   const [isValid, setIsValid] = useState<boolean>(true);
 
