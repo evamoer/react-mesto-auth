@@ -43,8 +43,10 @@ export const galleryReducer = (
           card._id === action.payload.cardId ? action.payload.newCard : card
         ),
       ];
-    case galleryActions.DELETE_CARD:
-      return [...state.filter((card) => card._id !== action.payload.cardId)];
+    case galleryActions.DELETE_CARD: {
+      return [...state.filter((card) => card._id !== action.payload)];
+    }
+
     default:
       return state;
   }
